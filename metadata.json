@@ -1,0 +1,6 @@
+{
+  "name": "Saleem Traders - Luxury Surfaces & Executive Dashboard",
+  "description": "Flagship digital storefront and executive enterprise dashboard for Saleem Traders, featuring premium tiles, sanitaryware, project quotations, and live pipeline management.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
