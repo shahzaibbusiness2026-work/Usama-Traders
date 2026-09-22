@@ -34,19 +34,19 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         onClick={onClose}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-0 sm:pl-10">
         <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-stone-200">
           {/* Header */}
-          <div className="p-5 border-b border-stone-200 flex items-center justify-between bg-[#fbf9f5]">
+          <div className="p-5 border-b border-stone-200 flex items-center justify-between bg-[#F5F1EA]/60">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded border border-[#886d4b]/30 bg-[#886d4b]/10 flex items-center justify-center text-[#886d4b]">
+              <div className="w-8 h-8 rounded border border-[#7E6348]/30 bg-[#7E6348]/10 flex items-center justify-center text-[#7E6348]">
                 <ShoppingBag className="w-4 h-4" />
               </div>
               <div>
-                <h2 className="font-editorial text-lg font-normal text-stone-900 tracking-[-0.01em]">
+                <h2 className="font-serif text-lg font-normal text-stone-900 tracking-tight">
                   Selected BOQ Items
                 </h2>
-                <span className="text-[10px] text-stone-500 font-sans tracking-wider uppercase block">Specification Docket</span>
+                <span className="tracking-[0.2em] text-[10px] text-[#7E6348] font-semibold font-sans uppercase block">Specification Docket</span>
               </div>
             </div>
             <button
@@ -65,7 +65,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   <FileText className="w-6 h-6" />
                 </div>
                 <p className="text-sm font-medium text-stone-700">No items selected yet.</p>
-                <p className="text-xs text-stone-400 max-w-xs mx-auto">
+                <p className="text-xs text-stone-500 max-w-xs mx-auto font-normal">
                   Add tiles, marble slabs, or sanitaryware from the catalog to build your project quote.
                 </p>
               </div>
@@ -73,7 +73,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               items.map((item) => (
                 <div
                   key={item.product.id}
-                  className="flex gap-3 p-3 rounded-lg border border-stone-200 bg-stone-50/40 relative group"
+                  className="flex gap-3 p-3 rounded-lg border border-stone-200 bg-stone-50/60 relative group"
                 >
                   <img
                     src={item.product.image}
@@ -82,17 +82,17 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   />
 
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-xs font-semibold text-stone-900 truncate">
+                    <h4 className="text-xs font-medium text-stone-900 truncate font-serif">
                       {item.product.name}
                     </h4>
-                    <p className="text-[10px] text-stone-500 mt-0.5">
+                    <p className="text-[11px] text-stone-600 mt-0.5 font-normal">
                       {item.selectedThickness ? `${item.selectedThickness} • ` : ''}
                       {item.product.dimensions}
                     </p>
 
-                    <div className="mt-1 text-xs font-bold text-stone-900">
+                    <div className="mt-1 text-xs font-semibold text-stone-900 font-sans">
                       {item.product.currency} {item.product.price.toLocaleString()}{' '}
-                      <span className="text-[10px] text-stone-400 font-normal">
+                      <span className="text-[11px] text-stone-500 font-normal">
                         {item.product.priceUnit}
                       </span>
                     </div>
@@ -106,7 +106,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                         >
                           <Minus className="w-3 h-3" />
                         </button>
-                        <span className="px-2 text-xs font-semibold text-stone-800">
+                        <span className="px-2 text-xs font-semibold text-stone-800 font-sans">
                           {item.quantity}
                         </span>
                         <button
@@ -119,7 +119,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
                       <button
                         onClick={() => onRemoveItem(item.product.id)}
-                        className="text-[11px] text-rose-600 hover:text-rose-800 flex items-center gap-1"
+                        className="text-[11px] text-rose-600 hover:text-rose-800 flex items-center gap-1 font-medium"
                       >
                         <Trash2 className="w-3 h-3" />
                         <span>Remove</span>
@@ -133,14 +133,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
           {/* Footer calculation & submit */}
           {items.length > 0 && (
-            <div className="p-5 border-t border-stone-200 bg-stone-50 space-y-3">
+            <div className="p-5 border-t border-stone-200 bg-[#FAF8F5] space-y-3">
               <div className="flex items-baseline justify-between text-xs">
-                <span className="text-stone-500 font-light">Estimated Base Value</span>
-                <span className="font-editorial text-xl font-normal text-stone-900 tracking-tight">
+                <span className="text-stone-600 font-normal">Estimated Base Value</span>
+                <span className="font-serif text-xl font-normal text-stone-900 tracking-tight">
                   PKR {totalEstimate.toLocaleString()}
                 </span>
               </div>
-              <p className="text-[10px] text-stone-400 font-light leading-relaxed">
+              <p className="text-[11px] text-stone-500 font-normal leading-relaxed">
                 Official contractor rates, volume discounts and shipping freight will be finalized in your customized BOQ.
               </p>
 
@@ -149,7 +149,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   onClose();
                   onProceedToQuote();
                 }}
-                className="w-full py-3.5 bg-[#886d4b] hover:bg-[#73593b] text-white text-[11px] font-medium tracking-[0.18em] uppercase rounded shadow-sm flex items-center justify-center gap-2 transition-all"
+                className="w-full py-3.5 bg-[#7E6348] hover:bg-[#A38A6B] text-white text-[11px] font-semibold tracking-[0.2em] uppercase rounded-none shadow-sm flex items-center justify-center gap-2 transition-all"
               >
                 <span>Finalize & Request Official Quote</span>
                 <ArrowRight className="w-3.5 h-3.5" />

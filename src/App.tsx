@@ -17,12 +17,18 @@ import { QuoteModal } from './components/modals/QuoteModal';
 import { SampleModal } from './components/modals/SampleModal';
 import { CartDrawer } from './components/modals/CartDrawer';
 import { Product360ReviewModal } from './components/modals/Product360ReviewModal';
+import { ProductComparisonModal } from './components/modals/ProductComparisonModal';
 
 export default function App() {
   const [activeView, setActiveView] = useState<ActiveView>('home');
   const [selectedProduct, setSelectedProduct] = useState<Product>(CATALOG_PRODUCTS[1]); // Verona Calacotta Gold
   const [selected360Product, setSelected360Product] = useState<Product | null>(null);
   const [is360ModalOpen, setIs360ModalOpen] = useState(false);
+  const [comparedProducts, setComparedProducts] = useState<Product[]>([
+    CATALOG_PRODUCTS[1],
+    CATALOG_PRODUCTS[0],
+  ]);
+  const [isComparisonModalOpen, setIsComparisonModalOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([
     {
       product: CATALOG_PRODUCTS[1],
@@ -43,6 +49,23 @@ export default function App() {
   const handleOpen360Review = (product: Product) => {
     setSelected360Product(product);
     setIs360ModalOpen(true);
+  };
+
+  const handleToggleCompare = (product: Product) => {
+    setComparedProducts((prev) => {
+      const exists = prev.some((p) => p.id === product.id);
+      if (exists) {
+        return prev.filter((p) => p.id !== product.id);
+      }
+      if (prev.length >= 3) {
+        return [...prev.slice(1), product];
+      }
+      return [...prev, product];
+    });
+  };
+
+  const handleRemoveComparedProduct = (productId: string) => {
+    setComparedProducts((prev) => prev.filter((p) => p.id !== productId));
   };
 
   // Add to cart / quote list handler
@@ -119,9 +142,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-[#faf9f6] text-stone-900 selection:bg-[#c5a880]/30 selection:text-stone-900 relative">
-      {/* Dynamic Scroll Progress Bar for high-end feel */}
+      {/* Dynamic Scroll Progress Bar for high-end architectural feel */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#886d4b] via-[#d5c1a4] to-[#886d4b] origin-left z-50 pointer-events-none"
+        className="fixed top-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#7E6348] via-[#A38A6B] to-[#7E6348] origin-left z-50 pointer-events-none"
         style={{ scaleX }}
       />
 
@@ -132,6 +155,8 @@ export default function App() {
           setActiveView={setActiveView}
           cartCount={totalCartCount}
           wishlistCount={wishlistIds.length}
+          comparisonCount={comparedProducts.length}
+          onOpenComparisonModal={() => setIsComparisonModalOpen(true)}
           onOpenCart={() => setIsCartOpen(true)}
           onOpenQuote={() => openQuoteModalFor()}
           searchQuery={searchQuery}
@@ -161,6 +186,9 @@ export default function App() {
                 wishlistIds={wishlistIds}
                 onOpenQuoteModal={() => openQuoteModalFor('General Project Specification')}
                 onOpen360Review={handleOpen360Review}
+                comparedProducts={comparedProducts}
+                onToggleCompare={handleToggleCompare}
+                onOpenComparisonModal={() => setIsComparisonModalOpen(true)}
               />
             </motion.div>
           )}
@@ -185,6 +213,9 @@ export default function App() {
                 onOpenQuoteModal={() => openQuoteModalFor('Tiles & Slabs Catalog Inquiry')}
                 searchQuery={searchQuery}
                 onOpen360Review={handleOpen360Review}
+                comparedProducts={comparedProducts}
+                onToggleCompare={handleToggleCompare}
+                onOpenComparisonModal={() => setIsComparisonModalOpen(true)}
               />
             </motion.div>
           )}
@@ -206,6 +237,9 @@ export default function App() {
                 onOpenQuoteModal={() => openQuoteModalFor(selectedProduct.name)}
                 onOpenSampleModal={openSampleModalFor}
                 onOpen360Modal={handleOpen360Review}
+                isCompared={comparedProducts.some((p) => p.id === selectedProduct.id)}
+                onToggleCompare={handleToggleCompare}
+                onOpenComparisonModal={() => setIsComparisonModalOpen(true)}
               />
             </motion.div>
           )}
@@ -274,6 +308,23 @@ export default function App() {
           }}
         />
       )}
+
+      {/* 5C. PRODUCT COMPARISON MODAL */}
+      <ProductComparisonModal
+        isOpen={isComparisonModalOpen}
+        onClose={() => setIsComparisonModalOpen(false)}
+        comparedProducts={comparedProducts}
+        allProducts={CATALOG_PRODUCTS}
+        onRemoveProduct={handleRemoveComparedProduct}
+        onClearAll={() => setComparedProducts([])}
+        onAddProductToCompare={handleToggleCompare}
+        onAddToCart={(p) => handleAddToCart(p, 1)}
+        onSelectProduct={(p) => {
+          setSelectedProduct(p);
+          setActiveView('product');
+          setIsComparisonModalOpen(false);
+        }}
+      />
     </div>
   );
 }

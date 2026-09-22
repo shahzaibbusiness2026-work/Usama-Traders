@@ -13,6 +13,7 @@ import {
   Building2,
   Phone,
   ChevronRight,
+  Scale,
 } from 'lucide-react';
 import { ActiveView } from '../../types';
 import { BrandLogo } from '../common/BrandLogo';
@@ -22,6 +23,8 @@ interface NavbarProps {
   setActiveView: (view: ActiveView) => void;
   cartCount: number;
   wishlistCount: number;
+  comparisonCount?: number;
+  onOpenComparisonModal?: () => void;
   onOpenQuoteModal?: () => void;
   onOpenCartDrawer?: () => void;
   onOpenCart?: () => void;
@@ -35,6 +38,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveView,
   cartCount,
   wishlistCount,
+  comparisonCount = 0,
+  onOpenComparisonModal,
   onOpenQuoteModal,
   onOpenCartDrawer,
   onOpenCart,
@@ -100,13 +105,13 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: 'Projects', view: 'home' as ActiveView, hash: '#projects' },
   ];
 
-  const quickSearchTags = ['Calacotta', 'Matt Tiles', 'Grohe', 'Sanitary', '60x120'];
+  const quickSearchTags = ['Calacotta Gold', 'Matt Porcelain', 'Grohe Fixtures', 'Sanitaryware', '60x120 Slabs'];
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200/90 shadow-xs transition-all duration-200">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E5DFD5] shadow-2xs transition-all duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20 gap-4">
+          <div className="flex items-center justify-between h-20 gap-6">
             {/* BRAND LOGO (Visible across all screen sizes) */}
             <div id="site-logo" className="shrink-0">
               <BrandLogo
@@ -119,8 +124,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               />
             </div>
 
-            {/* DESKTOP NAVIGATION LINKS (Visible ONLY on lg and above) */}
-            <nav className="hidden lg:flex items-center space-x-7 xl:space-x-9 text-xs font-medium text-stone-700">
+            {/* DESKTOP NAVIGATION LINKS (Evenly spaced gap-8, luxury optical tracking) */}
+            <nav className="hidden lg:flex items-center gap-8 text-xs font-semibold text-stone-700">
               {navLinks.map((link) => {
                 const isSelected =
                   (link.label === 'Home' && activeView === 'home') ||
@@ -138,21 +143,21 @@ export const Navbar: React.FC<NavbarProps> = ({
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }
                     }}
-                    className={`relative py-1.5 transition-colors font-sans uppercase tracking-[0.18em] text-[11px] hover:text-[#886d4b] ${
-                      isSelected ? 'text-[#886d4b] font-medium' : 'text-stone-700'
+                    className={`relative py-2 transition-colors font-sans uppercase tracking-[0.25em] text-xs font-semibold hover:text-[#7E6348] ${
+                      isSelected ? 'text-[#7E6348]' : 'text-stone-700'
                     }`}
                   >
                     {link.label}
                     {isSelected && (
-                      <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-[#886d4b] rounded-full" />
+                      <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-[#7E6348] rounded-full" />
                     )}
                   </button>
                 );
               })}
             </nav>
 
-            {/* DESKTOP SEARCH, UTILITIES & CTA (Visible ONLY on lg and above) */}
-            <div className="hidden lg:flex items-center gap-3 xl:gap-4 shrink-0">
+            {/* DESKTOP SEARCH, UTILITIES & ARCHITECTURAL THIN-BORDERED CTA */}
+            <div className="hidden lg:flex items-center gap-3 xl:gap-3.5 shrink-0">
               {/* Desktop Search Icon Only */}
               <div ref={desktopSearchRef} className="relative flex items-center">
                 <AnimatePresence mode="wait">
@@ -181,7 +186,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                               setDesktopSearchOpen(false);
                             }
                           }}
-                          className="w-full bg-stone-50 focus:bg-white border border-stone-300 focus:border-[#886d4b] rounded-full pl-8 pr-7 py-1.5 text-xs text-stone-800 placeholder-stone-400 focus:outline-none transition-all shadow-2xs font-sans"
+                          className="w-full bg-stone-50 focus:bg-white border border-stone-300 focus:border-[#7E6348] rounded-full pl-8 pr-7 py-1.5 text-xs text-stone-800 placeholder-stone-400 focus:outline-none transition-all shadow-2xs font-sans"
                         />
                         <Search className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                         <button
@@ -198,7 +203,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       key="desktop-search-icon"
                       id="desktop-search-btn"
                       onClick={() => setDesktopSearchOpen(true)}
-                      className="p-2 rounded-full hover:bg-stone-100 text-stone-700 hover:text-stone-950 transition-colors"
+                      className="p-2.5 rounded-full hover:bg-[#F5F1EA] text-stone-700 hover:text-stone-950 transition-colors"
                       title="Search catalog"
                       aria-label="Search catalog"
                     >
@@ -208,18 +213,35 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </AnimatePresence>
               </div>
 
+              {/* Comparison Tool Button */}
+              {onOpenComparisonModal && (
+                <button
+                  id="desktop-compare-btn"
+                  onClick={onOpenComparisonModal}
+                  className="relative p-2.5 rounded-full hover:bg-[#F5F1EA] text-stone-700 hover:text-stone-950 transition-colors"
+                  title={`Side-by-side comparison (${comparisonCount} items)`}
+                >
+                  <Scale className="w-5 h-5 stroke-[1.6]" />
+                  {comparisonCount > 0 && (
+                    <span className="absolute top-0.5 right-0.5 bg-[#7E6348] text-white text-[10px] min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center font-bold shadow-xs">
+                      {comparisonCount}
+                    </span>
+                  )}
+                </button>
+              )}
+
               {/* Wishlist Button */}
               <button
                 id="desktop-wishlist-btn"
                 onClick={() => {
                   setActiveView('catalog');
                 }}
-                className="relative p-2 rounded-full hover:bg-stone-100 text-stone-700 hover:text-stone-950 transition-colors"
+                className="relative p-2.5 rounded-full hover:bg-[#F5F1EA] text-stone-700 hover:text-stone-950 transition-colors"
                 title={`Saved Wishlist (${wishlistCount} items)`}
               >
                 <Heart className="w-5 h-5 stroke-[1.6]" />
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 bg-[#886d4b] text-white text-[10px] min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center font-bold shadow-xs">
+                  <span className="absolute top-0.5 right-0.5 bg-[#7E6348] text-white text-[10px] min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center font-bold shadow-xs">
                     {wishlistCount}
                   </span>
                 )}
@@ -229,36 +251,49 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 id="desktop-cart-btn"
                 onClick={handleCartClick}
-                className="relative p-2 rounded-full hover:bg-stone-100 text-stone-700 hover:text-stone-950 transition-colors"
+                className="relative p-2.5 rounded-full hover:bg-[#F5F1EA] text-stone-700 hover:text-stone-950 transition-colors"
                 title={`Selected Quote Cart (${cartCount} items)`}
               >
                 <ShoppingBag className="w-5 h-5 stroke-[1.6]" />
-                <span className="absolute -top-0.5 -right-0.5 bg-stone-900 text-white text-[10px] min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center font-bold shadow-xs">
+                <span className="absolute top-0.5 right-0.5 bg-stone-900 text-white text-[10px] min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center font-bold shadow-xs">
                   {cartCount}
                 </span>
               </button>
 
-              {/* Request a Quote CTA Button */}
+              {/* Architectural Thin-Bordered CTA Button */}
               <button
                 id="desktop-request-quote-btn"
                 onClick={handleQuoteClick}
-                className="inline-flex items-center justify-center px-6 py-2.5 bg-stone-900 hover:bg-[#886d4b] text-white text-[11px] font-medium tracking-[0.2em] uppercase rounded transition-all duration-300 shadow-2xs"
+                className="inline-flex items-center justify-center px-6 py-2.5 border border-[#7E6348] text-[#7E6348] hover:bg-[#7E6348] hover:text-white text-xs font-semibold tracking-[0.2em] uppercase rounded-none transition-all duration-300 shadow-2xs"
               >
                 Request a Quote
               </button>
             </div>
 
-            {/* MOBILE & TABLET VIEW: ONLY THE HAMBURGER MENU BUTTON SHOULD REMAIN */}
-            <div className="lg:hidden flex items-center">
+            {/* MOBILE & TABLET VIEW: QUICK ACTIONS & HAMBURGER */}
+            <div className="lg:hidden flex items-center gap-2">
+              <button
+                onClick={handleCartClick}
+                className="relative p-2.5 rounded-lg border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-800 transition-colors"
+                aria-label="View Cart"
+              >
+                <ShoppingBag className="w-5 h-5 stroke-[1.8]" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-stone-900 text-white text-[10px] min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center font-bold shadow-xs">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+
               <button
                 id="mobile-menu-toggle"
                 onClick={() => setMobileMenuOpen(true)}
-                className="relative p-2.5 rounded-lg border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-800 hover:text-stone-950 transition-colors focus:outline-none focus:ring-2 focus:ring-[#886d4b]"
+                className="relative p-2.5 rounded-lg border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-800 hover:text-stone-950 transition-colors focus:outline-none focus:ring-2 focus:ring-[#7E6348]"
                 aria-label="Open Navigation Menu"
               >
                 <Menu className="w-6 h-6 stroke-[2]" />
-                {(cartCount > 0 || wishlistCount > 0) && (
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#886d4b] rounded-full ring-2 ring-white" />
+                {(wishlistCount > 0 || comparisonCount > 0) && (
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#7E6348] rounded-full ring-2 ring-white" />
                 )}
               </button>
             </div>
@@ -289,7 +324,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="absolute top-0 right-0 bottom-0 w-[90vw] max-w-sm sm:max-w-md bg-white shadow-2xl flex flex-col justify-between overflow-hidden"
             >
               {/* Drawer Top Bar */}
-              <div className="p-4 sm:p-5 border-b border-stone-200 flex items-center justify-between bg-stone-50/70">
+              <div className="p-4 sm:p-5 border-b border-stone-200 flex items-center justify-between bg-[#FAF8F5]">
                 <BrandLogo
                   variant="dark"
                   size="sm"
@@ -323,12 +358,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                           executeSearch(searchQuery);
                         }
                       }}
-                      className="w-full bg-stone-50 border border-stone-200 rounded-lg pl-9 pr-16 py-2.5 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-[#856a42] focus:bg-white transition-all"
+                      className="w-full bg-stone-50 border border-stone-200 rounded-lg pl-9 pr-16 py-2.5 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-[#7E6348] focus:bg-white transition-all font-sans"
                     />
                     <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <button
                       onClick={() => executeSearch(searchQuery)}
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-stone-900 hover:bg-[#856a42] text-white text-[11px] font-semibold rounded transition-colors"
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-[#7E6348] hover:bg-[#A38A6B] text-white text-[11px] font-semibold rounded transition-colors"
                     >
                       Search
                     </button>
@@ -341,7 +376,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <button
                         key={tag}
                         onClick={() => executeSearch(tag)}
-                        className="text-[10px] px-2 py-0.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 transition-colors"
+                        className="text-[10px] px-2 py-0.5 rounded-full bg-stone-100 hover:bg-[#F5F1EA] text-stone-700 hover:text-[#7E6348] transition-colors"
                       >
                         {tag}
                       </button>
@@ -349,27 +384,26 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
                 </div>
 
-                {/* 2. Quick Action Cards (Quote Bag & Wishlist) */}
-                <div className="grid grid-cols-2 gap-2.5">
+                {/* 2. Quick Action Cards (Quote Bag, Wishlist, Compare) */}
+                <div className="grid grid-cols-3 gap-2">
                   {/* Cart / Quote Bag Card */}
                   <button
                     onClick={() => {
                       setMobileMenuOpen(false);
                       handleCartClick();
                     }}
-                    className="p-3 rounded-lg border border-stone-200 bg-stone-50 hover:bg-[#fbf8f3] hover:border-[#856a42]/50 transition-all text-left flex flex-col justify-between gap-2 group"
+                    className="p-2.5 rounded-lg border border-stone-200 bg-stone-50 hover:bg-[#FAF8F5] hover:border-[#7E6348]/50 transition-all text-left flex flex-col justify-between gap-1.5 group"
                   >
                     <div className="flex items-center justify-between">
-                      <div className="w-8 h-8 rounded-full bg-stone-900 text-white flex items-center justify-center group-hover:bg-[#856a42] transition-colors">
-                        <ShoppingBag className="w-4 h-4" />
+                      <div className="w-7 h-7 rounded-full bg-stone-900 text-white flex items-center justify-center group-hover:bg-[#7E6348] transition-colors">
+                        <ShoppingBag className="w-3.5 h-3.5" />
                       </div>
-                      <span className="text-[11px] font-bold px-1.5 py-0.5 bg-stone-200 rounded-full text-stone-800">
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 bg-stone-200 rounded-full text-stone-800">
                         {cartCount}
                       </span>
                     </div>
                     <div>
-                      <div className="text-xs font-semibold text-stone-900 leading-tight">Quote Cart</div>
-                      <div className="text-[10px] text-stone-500 mt-0.5">{cartCount} items selected</div>
+                      <div className="text-[11px] font-semibold text-stone-900 leading-tight">Quote Bag</div>
                     </div>
                   </button>
 
@@ -379,26 +413,46 @@ export const Navbar: React.FC<NavbarProps> = ({
                       setMobileMenuOpen(false);
                       setActiveView('catalog');
                     }}
-                    className="p-3 rounded-lg border border-stone-200 bg-stone-50 hover:bg-[#fbf8f3] hover:border-[#856a42]/50 transition-all text-left flex flex-col justify-between gap-2 group"
+                    className="p-2.5 rounded-lg border border-stone-200 bg-stone-50 hover:bg-[#FAF8F5] hover:border-[#7E6348]/50 transition-all text-left flex flex-col justify-between gap-1.5 group"
                   >
                     <div className="flex items-center justify-between">
-                      <div className="w-8 h-8 rounded-full bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center">
-                        <Heart className="w-4 h-4 fill-rose-500 text-rose-500" />
+                      <div className="w-7 h-7 rounded-full bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center">
+                        <Heart className="w-3.5 h-3.5 fill-rose-500 text-rose-500" />
                       </div>
-                      <span className="text-[11px] font-bold px-1.5 py-0.5 bg-stone-200 rounded-full text-stone-800">
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 bg-stone-200 rounded-full text-stone-800">
                         {wishlistCount}
                       </span>
                     </div>
                     <div>
-                      <div className="text-xs font-semibold text-stone-900 leading-tight">Saved Wishlist</div>
-                      <div className="text-[10px] text-stone-500 mt-0.5">{wishlistCount} saved items</div>
+                      <div className="text-[11px] font-semibold text-stone-900 leading-tight">Wishlist</div>
+                    </div>
+                  </button>
+
+                  {/* Compare Card */}
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      if (onOpenComparisonModal) onOpenComparisonModal();
+                    }}
+                    className="p-2.5 rounded-lg border border-stone-200 bg-stone-50 hover:bg-[#FAF8F5] hover:border-[#7E6348]/50 transition-all text-left flex flex-col justify-between gap-1.5 group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="w-7 h-7 rounded-full bg-[#F5F1EA] text-[#7E6348] border border-[#7E6348]/30 flex items-center justify-center">
+                        <Scale className="w-3.5 h-3.5" />
+                      </div>
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 bg-stone-200 rounded-full text-stone-800">
+                        {comparisonCount}
+                      </span>
+                    </div>
+                    <div>
+                      <div className="text-[11px] font-semibold text-stone-900 leading-tight">Compare</div>
                     </div>
                   </button>
                 </div>
 
                 {/* 3. Primary Navigation Menu List */}
                 <div className="space-y-1 pt-1">
-                  <div className="text-[10px] uppercase font-bold tracking-widest text-stone-400 mb-2 px-1">
+                  <div className="tracking-[0.25em] text-[10px] uppercase font-bold text-stone-400 mb-2 px-1">
                     Storefront Navigation
                   </div>
 
@@ -410,7 +464,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }}
                     className={`w-full flex items-center justify-between p-2.5 rounded-lg text-xs font-semibold transition-colors ${
                       activeView === 'home'
-                        ? 'bg-[#886d4b] text-white'
+                        ? 'bg-[#7E6348] text-white'
                         : 'text-stone-800 hover:bg-stone-100'
                     }`}
                   >
@@ -429,7 +483,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }}
                     className={`w-full flex items-center justify-between p-2.5 rounded-lg text-xs font-semibold transition-colors ${
                       activeView === 'catalog' || activeView === 'product'
-                        ? 'bg-[#886d4b] text-white'
+                        ? 'bg-[#7E6348] text-white'
                         : 'text-stone-800 hover:bg-stone-100'
                     }`}
                   >
@@ -456,7 +510,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           setActiveView('catalog');
                           setMobileMenuOpen(false);
                         }}
-                        className="w-full text-left py-1 text-[11px] text-stone-500 hover:text-stone-900 transition-colors"
+                        className="w-full text-left py-1 text-xs text-stone-600 hover:text-[#7E6348] transition-colors"
                       >
                         • {cat}
                       </button>
@@ -475,7 +529,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     className="w-full flex items-center justify-between p-2.5 rounded-lg text-xs font-semibold text-stone-800 hover:bg-stone-100 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <Sparkles className="w-4 h-4 text-[#886d4b]" />
+                      <Sparkles className="w-4 h-4 text-[#7E6348]" />
                       <span>Partner Brands</span>
                     </div>
                     <ChevronRight className="w-3.5 h-3.5 opacity-60" />
@@ -493,7 +547,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     className="w-full flex items-center justify-between p-2.5 rounded-lg text-xs font-semibold text-stone-800 hover:bg-stone-100 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <Building2 className="w-4 h-4 text-[#886d4b]" />
+                      <Building2 className="w-4 h-4 text-[#7E6348]" />
                       <span>Architectural Projects</span>
                     </div>
                     <ChevronRight className="w-3.5 h-3.5 opacity-60" />
@@ -502,26 +556,26 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
 
               {/* Drawer Footer Actions & Concierge */}
-              <div className="p-4 sm:p-5 border-t border-stone-200 bg-stone-50/80 space-y-3">
+              <div className="p-4 sm:p-5 border-t border-stone-200 bg-[#FAF8F5] space-y-3">
                 {/* Request a Quote Button */}
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
                     handleQuoteClick();
                   }}
-                  className="w-full py-3 bg-stone-900 hover:bg-[#886d4b] text-white text-xs font-medium tracking-[0.14em] uppercase rounded shadow-sm transition-colors text-center flex items-center justify-center gap-2"
+                  className="w-full py-3 border border-[#7E6348] bg-[#7E6348] hover:bg-[#A38A6B] text-white text-xs font-semibold tracking-[0.2em] uppercase rounded-none shadow-sm transition-colors text-center flex items-center justify-center gap-2"
                 >
                   <span>Request a Project Quote</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
 
                 {/* Showroom Direct Contact */}
-                <div className="pt-2 text-center text-[11px] text-stone-500">
+                <div className="pt-2 text-center text-xs text-stone-500">
                   <div className="flex items-center justify-center gap-1.5 font-medium text-stone-700">
-                    <Phone className="w-3.5 h-3.5 text-[#886d4b]" />
+                    <Phone className="w-3.5 h-3.5 text-[#7E6348]" />
                     <span>+92 (42) 111-SALEEM (725336)</span>
                   </div>
-                  <p className="text-[10px] text-stone-400 mt-0.5">
+                  <p className="text-[11px] text-stone-500 mt-0.5">
                     Lahore • Karachi • Islamabad | Mon – Sat: 9am – 8pm
                   </p>
                 </div>

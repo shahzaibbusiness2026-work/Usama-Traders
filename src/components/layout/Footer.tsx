@@ -40,21 +40,21 @@ export const Footer: React.FC<FooterProps> = ({ setActiveView, onOpenQuote }) =>
               className="mb-4"
             />
 
-            <p className="text-xs leading-relaxed text-stone-400 max-w-sm mb-6 font-light">
+            <p className="text-xs leading-relaxed text-stone-400 max-w-sm mb-6 font-normal">
               Your trusted partner for premium tiles, sanitaryware, kitchen solutions and accessories in Pakistan. Creating beautiful spaces since 2005.
             </p>
 
             <div className="flex items-center gap-2.5 text-stone-400">
-              <a href="#" aria-label="Facebook" className="w-8 h-8 rounded-full border border-stone-800 flex items-center justify-center hover:text-white hover:border-[#c5a880] hover:bg-stone-900 transition-colors">
+              <a href="#" aria-label="Facebook" className="w-8 h-8 rounded-full border border-stone-800 flex items-center justify-center hover:text-white hover:border-[#7E6348] hover:bg-stone-900 transition-colors">
                 <Facebook className="w-3.5 h-3.5" />
               </a>
-              <a href="#" aria-label="Instagram" className="w-8 h-8 rounded-full border border-stone-800 flex items-center justify-center hover:text-white hover:border-[#c5a880] hover:bg-stone-900 transition-colors">
+              <a href="#" aria-label="Instagram" className="w-8 h-8 rounded-full border border-stone-800 flex items-center justify-center hover:text-white hover:border-[#7E6348] hover:bg-stone-900 transition-colors">
                 <Instagram className="w-3.5 h-3.5" />
               </a>
-              <a href="#" aria-label="YouTube" className="w-8 h-8 rounded-full border border-stone-800 flex items-center justify-center hover:text-white hover:border-[#c5a880] hover:bg-stone-900 transition-colors">
+              <a href="#" aria-label="YouTube" className="w-8 h-8 rounded-full border border-stone-800 flex items-center justify-center hover:text-white hover:border-[#7E6348] hover:bg-stone-900 transition-colors">
                 <Youtube className="w-3.5 h-3.5" />
               </a>
-              <a href="#" aria-label="LinkedIn" className="w-8 h-8 rounded-full border border-stone-800 flex items-center justify-center hover:text-white hover:border-[#c5a880] hover:bg-stone-900 transition-colors">
+              <a href="#" aria-label="LinkedIn" className="w-8 h-8 rounded-full border border-stone-800 flex items-center justify-center hover:text-white hover:border-[#7E6348] hover:bg-stone-900 transition-colors">
                 <Linkedin className="w-3.5 h-3.5" />
               </a>
             </div>
@@ -62,10 +62,10 @@ export const Footer: React.FC<FooterProps> = ({ setActiveView, onOpenQuote }) =>
 
           {/* Col 2: Quick Links */}
           <div className="lg:col-span-2">
-            <h4 className="text-xs font-semibold uppercase tracking-[0.16em] text-white mb-4 font-sans">
+            <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A38A6B] mb-4 font-sans">
               Quick Links
             </h4>
-            <ul className="space-y-2.5 text-xs text-stone-400 font-light">
+            <ul className="space-y-2.5 text-xs text-stone-300 font-normal">
               <li>
                 <button onClick={() => setActiveView('home')} className="hover:text-white transition-colors">
                   About Us
@@ -102,10 +102,10 @@ export const Footer: React.FC<FooterProps> = ({ setActiveView, onOpenQuote }) =>
 
           {/* Col 3: Customer Support */}
           <div className="lg:col-span-2">
-            <h4 className="text-xs font-semibold uppercase tracking-[0.16em] text-white mb-4 font-sans">
+            <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A38A6B] mb-4 font-sans">
               Customer Support
             </h4>
-            <ul className="space-y-2.5 text-xs text-stone-400 font-light">
+            <ul className="space-y-2.5 text-xs text-stone-300 font-normal">
               <li>
                 <a href="#track" className="hover:text-white transition-colors">Track Order</a>
               </li>
@@ -133,62 +133,62 @@ export const Footer: React.FC<FooterProps> = ({ setActiveView, onOpenQuote }) =>
           {/* Col 4: Contact & Newsletter */}
           <div className="lg:col-span-4 space-y-6">
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-[0.16em] text-white mb-3.5 font-sans">
+              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A38A6B] mb-3.5 font-sans">
                 Contact Information
               </h4>
-              <ul className="space-y-2.5 text-xs text-stone-400 font-light">
+              <ul className="space-y-2.5 text-xs text-stone-300 font-normal">
                 <li className="flex items-start gap-2.5">
-                  <MapPin className="w-3.5 h-3.5 text-[#c5a880] mt-0.5 shrink-0" />
+                  <MapPin className="w-3.5 h-3.5 text-[#A38A6B] mt-0.5 shrink-0" />
                   <span>Main Boulevard, DHA Phase 6, Lahore, Pakistan</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <Phone className="w-3.5 h-3.5 text-[#c5a880] mt-0.5 shrink-0" />
-                  <span className="font-mono text-stone-200">+92 300 1234567</span>
+                  <Phone className="w-3.5 h-3.5 text-[#A38A6B] mt-0.5 shrink-0" />
+                  <span className="font-mono text-stone-100">+92 300 1234567</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <Mail className="w-3.5 h-3.5 text-[#c5a880] mt-0.5 shrink-0" />
+                  <Mail className="w-3.5 h-3.5 text-[#A38A6B] mt-0.5 shrink-0" />
                   <span>info@saleemtraders.pk</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <Clock className="w-3.5 h-3.5 text-[#c5a880] mt-0.5 shrink-0" />
+                  <Clock className="w-3.5 h-3.5 text-[#A38A6B] mt-0.5 shrink-0" />
                   <span>Mon - Sat: 9:00 AM - 8:00 PM<br />Sunday: 10:00 AM - 6:00 PM</span>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="text-xs font-semibold uppercase tracking-[0.16em] text-white mb-2 font-sans">
+              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A38A6B] mb-2 font-sans">
                 Subscribe to Our Newsletter
               </h4>
-              <p className="text-[11px] text-stone-400 mb-2.5 font-light">
-                Get the latest updates on new arrivals, exclusive offers and design inspiration.
+              <p className="text-[12px] text-stone-400 mb-2.5 font-normal">
+                Get the latest updates on new arrivals, exclusive offers and architectural inspiration.
               </p>
               <form onSubmit={handleSubscribe} className="space-y-2">
-                <div className="flex items-center rounded bg-stone-900 border border-stone-800 focus-within:border-[#c5a880] overflow-hidden">
+                <div className="flex items-center rounded bg-stone-900 border border-stone-800 focus-within:border-[#7E6348] overflow-hidden">
                   <input
                     type="email"
                     required
                     placeholder="Enter your email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="bg-transparent text-xs px-3.5 py-2 text-stone-200 placeholder-stone-500 focus:outline-none flex-1 font-light"
+                    className="bg-transparent text-xs px-3.5 py-2.5 text-stone-100 placeholder-stone-500 focus:outline-none flex-1 font-normal"
                   />
                   <button
                     type="submit"
-                    className="bg-[#c5a880] hover:bg-[#b0926b] text-stone-950 p-2.5 transition-colors flex items-center justify-center font-medium"
+                    className="bg-[#7E6348] hover:bg-[#A38A6B] text-white px-3.5 py-2.5 transition-colors flex items-center justify-center font-medium"
                     title="Subscribe"
                   >
                     {subscribed ? <Check className="w-4 h-4 text-white" /> : <ArrowRight className="w-4 h-4" />}
                   </button>
                 </div>
-                <label className="flex items-start gap-2 text-[10px] text-stone-400 cursor-pointer select-none">
+                <label className="flex items-start gap-2 text-[11px] text-stone-400 cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={agreed}
                     onChange={(e) => setAgreed(e.target.checked)}
-                    className="mt-0.5 rounded border-stone-800 bg-stone-900 accent-[#c5a880] text-[#c5a880] focus:ring-0"
+                    className="mt-0.5 rounded border-stone-800 bg-stone-900 accent-[#7E6348] text-[#7E6348] focus:ring-0"
                   />
-                  <span className="font-light">I agree to receive marketing communications from Saleem Traders.</span>
+                  <span className="font-normal">I agree to receive communications from Saleem Traders.</span>
                 </label>
                 {subscribed && (
                   <p className="text-[11px] text-emerald-400 mt-1">Thank you for subscribing to our updates!</p>

@@ -14,7 +14,7 @@ export interface Product {
   currency: string;
   image: string;
   gallery?: string[];
-  badge?: 'New' | 'Bestseller' | 'Premium Collection';
+  badge?: 'New' | 'Bestseller' | 'Premium Collection' | 'FEATURED' | 'BESTSELLER' | 'NEW' | 'PREMIUM' | 'TRENDING' | 'EXCLUSIVE' | string;
   rating?: number;
   reviewsCount?: number;
   inStock: boolean;

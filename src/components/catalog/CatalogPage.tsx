@@ -20,6 +20,10 @@ interface CatalogPageProps {
   onOpenQuoteModal: () => void;
   onSelectProduct: (product: Product) => void;
   onOpen360Review?: (product: Product) => void;
+  searchQuery?: string;
+  comparedProducts?: Product[];
+  onToggleCompare?: (product: Product) => void;
+  onOpenComparisonModal?: () => void;
 }
 
 export const CatalogPage: React.FC<CatalogPageProps> = ({
@@ -30,8 +34,12 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
   onOpenQuoteModal,
   onSelectProduct,
   onOpen360Review,
+  searchQuery: externalSearchQuery = '',
+  comparedProducts = [],
+  onToggleCompare,
+  onOpenComparisonModal,
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(externalSearchQuery);
   const [selectedTypes, setSelectedTypes] = useState<string[]>(['Sanitary Ware']);
   const [selectedApplications, setSelectedApplications] = useState<string[]>([]);
   const [selectedFinishes, setSelectedFinishes] = useState<string[]>([]);
@@ -160,20 +168,20 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
         </nav>
       </div>
 
-      {/* 2. HERO BANNER matching Image 2 */}
+      {/* 2. HERO BANNER matching European Architectural Storefront */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="rounded border border-stone-200 bg-white overflow-hidden shadow-2xs">
+        <div className="rounded border border-[#E5DFD5] bg-white overflow-hidden shadow-2xs">
           <div className="grid grid-cols-1 lg:grid-cols-12">
             {/* Left Content */}
             <div className="lg:col-span-7 p-8 sm:p-10 lg:p-12 flex flex-col justify-center space-y-4">
-              <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#886d4b]">
-                BATHROOM COLLECTION
+              <div className="tracking-[0.25em] text-xs font-semibold uppercase text-[#7E6348]">
+                BATHROOM & SANITARY COLLECTION
               </div>
-              <h1 className="font-editorial text-3xl sm:text-4xl lg:text-5xl text-stone-900 font-normal tracking-tight leading-[1.15]">
+              <h1 className="font-serif text-4xl lg:text-5xl text-stone-900 font-normal tracking-tight leading-[1.15]">
                 Refined Living Starts with Better Surfaces
               </h1>
-              <p className="text-xs sm:text-sm text-stone-600 font-light max-w-lg leading-relaxed">
-                Premium sanitary ware, architectural surfaces and fittings for modern spaces.
+              <p className="font-sans text-stone-600 text-sm sm:text-base font-normal max-w-lg leading-relaxed">
+                Curated European sanitaryware, architectural surfaces, and precision brass fittings engineered for timeless architectural spaces.
               </p>
               <div className="pt-2">
                 <button
@@ -181,7 +189,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
                     const el = document.getElementById('catalog-products-grid');
                     el?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#d5b282] hover:bg-[#c5a880] text-stone-950 text-xs font-semibold uppercase tracking-[0.16em] rounded transition-all shadow-xs"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#7E6348] hover:bg-[#A38A6B] text-white text-xs font-semibold uppercase tracking-[0.16em] rounded-none transition-all shadow-xs"
                 >
                   <span>EXPLORE COLLECTION</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -197,7 +205,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-stone-950/60 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute bottom-5 right-5 text-white text-[10px] tracking-[0.2em] uppercase font-sans font-medium bg-stone-900/70 backdrop-blur-xs px-3.5 py-1.5 rounded border border-white/10">
+              <div className="absolute bottom-5 right-5 text-white text-xs tracking-[0.2em] uppercase font-sans font-medium bg-stone-900/80 backdrop-blur-xs px-3.5 py-1.5 rounded-none border border-white/10">
                 SPACES THAT INSPIRE EVERYDAY
               </div>
             </div>
@@ -207,17 +215,17 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
 
       {/* 3. MAIN CATALOG WITH FACETED SIDEBAR & GRID */}
       <div id="catalog-products-grid" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        {/* Header Bar matching Image 2 */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-stone-200 gap-4 mb-6">
+        {/* Header Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-[#E5DFD5] gap-4 mb-6">
           <div>
-            <h2 className="font-editorial text-2xl sm:text-3xl text-stone-900 font-normal tracking-tight">
+            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-stone-900 font-normal tracking-tight">
               Bathroom & Sanitary Collections
             </h2>
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-xs text-stone-500 font-light">
-              Discover 132 premium products
+            <span className="text-xs text-stone-600 font-normal">
+              Discover {filteredProducts.length} architectural products
             </span>
 
             <div className="flex items-center gap-1.5">
@@ -225,7 +233,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-white border border-stone-300 rounded px-2.5 py-1 text-xs text-stone-800 focus:outline-none focus:border-[#886d4b]"
+                className="bg-white border border-stone-300 rounded px-2.5 py-1 text-xs text-stone-800 focus:outline-none focus:border-[#7E6348]"
               >
                 <option>Featured</option>
                 <option>Price: Low to High</option>
@@ -261,14 +269,14 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
               {/* Header */}
               <div className="flex items-center justify-between pb-3 border-b border-stone-200">
                 <div className="flex items-center gap-2 text-stone-900">
-                  <SlidersHorizontal className="w-4 h-4 text-[#886d4b]" />
-                  <h3 className="text-xs font-semibold uppercase tracking-[0.14em] font-sans">
+                  <SlidersHorizontal className="w-4 h-4 text-[#7E6348]" />
+                  <h3 className="text-xs font-semibold uppercase tracking-[0.2em] font-sans text-stone-900">
                     Refine Your Search
                   </h3>
                 </div>
                 <button
                   onClick={clearAllFilters}
-                  className="text-[11px] text-[#886d4b] hover:text-stone-950 font-medium transition-colors"
+                  className="text-xs text-[#7E6348] hover:text-stone-950 font-medium transition-colors"
                 >
                   Clear All Filters
                 </button>
@@ -278,13 +286,13 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
               <div className="border-b border-stone-100 pb-4">
                 <button
                   onClick={() => toggleSection('productType')}
-                  className="w-full flex items-center justify-between text-xs font-semibold text-stone-900 py-1"
+                  className="w-full flex items-center justify-between text-xs sm:text-[13px] font-semibold text-stone-900 py-1.5 font-sans"
                 >
                   <span>Product Type</span>
-                  {openSections.productType ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                  {openSections.productType ? <ChevronUp className="w-3.5 h-3.5 text-stone-500" /> : <ChevronDown className="w-3.5 h-3.5 text-stone-500" />}
                 </button>
                 {openSections.productType && (
-                  <div className="mt-3 space-y-2 text-xs text-stone-600">
+                  <div className="mt-3 space-y-2 text-xs sm:text-[13px] text-stone-600 font-sans">
                     {[
                       { label: 'Marble & Natural Stone', count: 24 },
                       { label: 'Porcelain & Ceramic Tiles', count: 18 },
@@ -300,11 +308,11 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
                             type="checkbox"
                             checked={selectedTypes.includes(item.label)}
                             onChange={() => toggleArrayItem(selectedTypes, setSelectedTypes, item.label)}
-                            className="rounded border-stone-300 accent-[#886d4b] text-[#886d4b] focus:ring-0 w-3.5 h-3.5"
+                            className="rounded border-stone-300 accent-[#7E6348] text-[#7E6348] focus:ring-0 w-3.5 h-3.5"
                           />
                           <span>{item.label}</span>
                         </span>
-                        <span className="text-[11px] text-stone-400 font-mono">({item.count})</span>
+                        <span className="text-xs text-stone-400 font-sans">({item.count})</span>
                       </label>
                     ))}
                   </div>
@@ -315,13 +323,13 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
               <div className="border-b border-stone-100 pb-4">
                 <button
                   onClick={() => toggleSection('application')}
-                  className="w-full flex items-center justify-between text-xs font-semibold text-stone-900 py-1"
+                  className="w-full flex items-center justify-between text-xs sm:text-[13px] font-semibold text-stone-900 py-1.5 font-sans"
                 >
                   <span>Application</span>
-                  {openSections.application ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                  {openSections.application ? <ChevronUp className="w-3.5 h-3.5 text-stone-500" /> : <ChevronDown className="w-3.5 h-3.5 text-stone-500" />}
                 </button>
                 {openSections.application && (
-                  <div className="mt-3 space-y-2 text-xs text-stone-600">
+                  <div className="mt-3 space-y-2 text-xs sm:text-[13px] text-stone-600 font-sans">
                     {[
                       { label: 'Residential', count: 62 },
                       { label: 'Commercial', count: 28 },
@@ -334,11 +342,11 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
                             type="checkbox"
                             checked={selectedApplications.includes(item.label)}
                             onChange={() => toggleArrayItem(selectedApplications, setSelectedApplications, item.label)}
-                            className="rounded border-stone-300 accent-[#886d4b] text-[#886d4b] focus:ring-0 w-3.5 h-3.5"
+                            className="rounded border-stone-300 accent-[#7E6348] text-[#7E6348] focus:ring-0 w-3.5 h-3.5"
                           />
                           <span>{item.label}</span>
                         </span>
-                        <span className="text-[11px] text-stone-400 font-mono">({item.count})</span>
+                        <span className="text-xs text-stone-400 font-sans">({item.count})</span>
                       </label>
                     ))}
                   </div>
@@ -349,13 +357,13 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
               <div className="border-b border-stone-100 pb-4">
                 <button
                   onClick={() => toggleSection('finish')}
-                  className="w-full flex items-center justify-between text-xs font-semibold text-stone-900 py-1"
+                  className="w-full flex items-center justify-between text-xs sm:text-[13px] font-semibold text-stone-900 py-1.5 font-sans"
                 >
                   <span>Finish</span>
-                  {openSections.finish ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                  {openSections.finish ? <ChevronUp className="w-3.5 h-3.5 text-stone-500" /> : <ChevronDown className="w-3.5 h-3.5 text-stone-500" />}
                 </button>
                 {openSections.finish && (
-                  <div className="mt-3 space-y-2 text-xs text-stone-600">
+                  <div className="mt-3 space-y-2 text-xs sm:text-[13px] text-stone-600 font-sans">
                     {[
                       { label: 'Polished', count: 36 },
                       { label: 'Honed', count: 18 },
@@ -369,28 +377,28 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
                             type="checkbox"
                             checked={selectedFinishes.includes(item.label)}
                             onChange={() => toggleArrayItem(selectedFinishes, setSelectedFinishes, item.label)}
-                            className="rounded border-stone-300 accent-[#886d4b] text-[#886d4b] focus:ring-0 w-3.5 h-3.5"
+                            className="rounded border-stone-300 accent-[#7E6348] text-[#7E6348] focus:ring-0 w-3.5 h-3.5"
                           />
                           <span>{item.label}</span>
                         </span>
-                        <span className="text-[11px] text-stone-400 font-mono">({item.count})</span>
+                        <span className="text-xs text-stone-400 font-sans">({item.count})</span>
                       </label>
                     ))}
                   </div>
                 )}
               </div>
 
-              {/* 4. Price Range (PKR) slider matching Image 2 */}
+              {/* 4. Price Range (PKR) slider */}
               <div className="border-b border-stone-100 pb-4">
                 <button
                   onClick={() => toggleSection('priceRange')}
-                  className="w-full flex items-center justify-between text-xs font-semibold text-stone-900 py-1"
+                  className="w-full flex items-center justify-between text-xs sm:text-[13px] font-semibold text-stone-900 py-1.5 font-sans"
                 >
                   <span>Price Range (PKR)</span>
-                  {openSections.priceRange ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                  {openSections.priceRange ? <ChevronUp className="w-3.5 h-3.5 text-stone-500" /> : <ChevronDown className="w-3.5 h-3.5 text-stone-500" />}
                 </button>
                 {openSections.priceRange && (
-                  <div className="mt-3 space-y-2">
+                  <div className="mt-3 space-y-2.5">
                     <input
                       type="range"
                       min={10000}
@@ -398,27 +406,27 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
                       step={5000}
                       value={maxPrice}
                       onChange={(e) => setMaxPrice(Number(e.target.value))}
-                      className="w-full accent-[#886d4b]"
+                      className="w-full accent-[#7E6348]"
                     />
-                    <div className="flex items-center justify-between text-[11px] text-stone-500 font-mono">
+                    <div className="flex items-center justify-between text-xs text-stone-600 font-sans">
                       <span>PKR 0</span>
-                      <span>PKR {maxPrice.toLocaleString()}</span>
+                      <span className="font-medium text-stone-900">PKR {maxPrice.toLocaleString()}</span>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* 5. Brand matching Image 2 */}
+              {/* 5. Brand */}
               <div className="border-b border-stone-100 pb-4">
                 <button
                   onClick={() => toggleSection('brand')}
-                  className="w-full flex items-center justify-between text-xs font-semibold text-stone-900 py-1"
+                  className="w-full flex items-center justify-between text-xs sm:text-[13px] font-semibold text-stone-900 py-1.5 font-sans"
                 >
                   <span>Brand</span>
-                  {openSections.brand ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                  {openSections.brand ? <ChevronUp className="w-3.5 h-3.5 text-stone-500" /> : <ChevronDown className="w-3.5 h-3.5 text-stone-500" />}
                 </button>
                 {openSections.brand && (
-                  <div className="mt-3 space-y-2 text-xs text-stone-600">
+                  <div className="mt-3 space-y-2 text-xs sm:text-[13px] text-stone-600 font-sans">
                     {[
                       { label: 'Roca', count: 14 },
                       { label: 'Kohler', count: 12 },
@@ -434,14 +442,14 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
                             type="checkbox"
                             checked={selectedBrands.includes(item.label)}
                             onChange={() => toggleArrayItem(selectedBrands, setSelectedBrands, item.label)}
-                            className="rounded border-stone-300 accent-[#886d4b] text-[#886d4b] focus:ring-0 w-3.5 h-3.5"
+                            className="rounded border-stone-300 accent-[#7E6348] text-[#7E6348] focus:ring-0 w-3.5 h-3.5"
                           />
                           <span>{item.label}</span>
                         </span>
-                        <span className="text-[11px] text-stone-400 font-mono">({item.count})</span>
+                        <span className="text-xs text-stone-400 font-sans">({item.count})</span>
                       </label>
                     ))}
-                    <button className="text-[11px] text-[#886d4b] hover:text-stone-950 font-medium pt-1">
+                    <button className="text-xs text-[#7E6348] hover:text-stone-950 font-medium pt-1">
                       More Brands +
                     </button>
                   </div>
@@ -452,13 +460,13 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
               <div className="border-b border-stone-100 pb-4">
                 <button
                   onClick={() => toggleSection('stockStatus')}
-                  className="w-full flex items-center justify-between text-xs font-semibold text-stone-900 py-1"
+                  className="w-full flex items-center justify-between text-xs sm:text-[13px] font-semibold text-stone-900 py-1.5 font-sans"
                 >
                   <span>Stock Status</span>
-                  {openSections.stockStatus ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                  {openSections.stockStatus ? <ChevronUp className="w-3.5 h-3.5 text-stone-500" /> : <ChevronDown className="w-3.5 h-3.5 text-stone-500" />}
                 </button>
                 {openSections.stockStatus && (
-                  <div className="mt-3 space-y-2 text-xs text-stone-600">
+                  <div className="mt-3 space-y-2 text-xs sm:text-[13px] text-stone-600 font-sans">
                     {[
                       { label: 'In Stock', count: 89 },
                       { label: 'Pre-order', count: 43 },
@@ -469,11 +477,11 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
                             type="checkbox"
                             checked={selectedStock.includes(item.label)}
                             onChange={() => toggleArrayItem(selectedStock, setSelectedStock, item.label)}
-                            className="rounded border-stone-300 accent-[#886d4b] text-[#886d4b] focus:ring-0 w-3.5 h-3.5"
+                            className="rounded border-stone-300 accent-[#7E6348] text-[#7E6348] focus:ring-0 w-3.5 h-3.5"
                           />
                           <span>{item.label}</span>
                         </span>
-                        <span className="text-[11px] text-stone-400 font-mono">({item.count})</span>
+                        <span className="text-xs text-stone-400 font-sans">({item.count})</span>
                       </label>
                     ))}
                   </div>
@@ -484,13 +492,13 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
               <div>
                 <button
                   onClick={() => toggleSection('size')}
-                  className="w-full flex items-center justify-between text-xs font-semibold text-stone-900 py-1"
+                  className="w-full flex items-center justify-between text-xs sm:text-[13px] font-semibold text-stone-900 py-1.5 font-sans"
                 >
                   <span>Size</span>
-                  {openSections.size ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                  {openSections.size ? <ChevronUp className="w-3.5 h-3.5 text-stone-500" /> : <ChevronDown className="w-3.5 h-3.5 text-stone-500" />}
                 </button>
                 {openSections.size && (
-                  <div className="mt-3 space-y-2 text-xs text-stone-600">
+                  <div className="mt-3 space-y-2 text-xs sm:text-[13px] text-stone-600 font-sans">
                     {[
                       { label: 'Small', count: 18 },
                       { label: 'Medium', count: 46 },
@@ -503,11 +511,11 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
                             type="checkbox"
                             checked={selectedSizes.includes(item.label)}
                             onChange={() => toggleArrayItem(selectedSizes, setSelectedSizes, item.label)}
-                            className="rounded border-stone-300 accent-[#886d4b] text-[#886d4b] focus:ring-0 w-3.5 h-3.5"
+                            className="rounded border-stone-300 accent-[#7E6348] text-[#7E6348] focus:ring-0 w-3.5 h-3.5"
                           />
                           <span>{item.label}</span>
                         </span>
-                        <span className="text-[11px] text-stone-400 font-mono">({item.count})</span>
+                        <span className="text-xs text-stone-400 font-sans">({item.count})</span>
                       </label>
                     ))}
                   </div>
@@ -516,7 +524,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
             </div>
           </aside>
 
-          {/* RIGHT PRODUCT GRID (3x3 matching Image 2) */}
+          {/* RIGHT PRODUCT GRID */}
           <main className="lg:col-span-9 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {filteredProducts.slice(0, 9).map((product, idx) => (
@@ -532,22 +540,24 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
                   onAddToCart={onAddToCart}
                   onToggleWishlist={onToggleWishlist}
                   onOpen360Review={onOpen360Review}
+                  isCompared={comparedProducts.some((cp) => cp.id === product.id)}
+                  onToggleCompare={onToggleCompare}
                   variant="grid"
                 />
               ))}
             </div>
 
-            {/* Pagination matching Image 2 */}
+            {/* Pagination */}
             <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs border-t border-stone-200">
-              <span className="text-stone-500 font-light">
-                Showing 1–9 of 132 products
+              <span className="text-stone-600 font-normal">
+                Showing 1–{Math.min(9, filteredProducts.length)} of {filteredProducts.length} products
               </span>
 
               <div className="flex items-center gap-1">
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="w-8 h-8 rounded border border-stone-300 hover:bg-stone-100 flex items-center justify-center text-stone-600 disabled:opacity-40 transition-colors"
+                  className="w-8 h-8 rounded-none border border-stone-300 hover:bg-stone-100 flex items-center justify-center text-stone-600 disabled:opacity-40 transition-colors"
                 >
                   &lt;
                 </button>
@@ -555,7 +565,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
                   <button
                     key={pageNum}
                     onClick={() => setCurrentPage(pageNum)}
-                    className={`w-8 h-8 rounded text-xs transition-colors ${
+                    className={`w-8 h-8 rounded-none text-xs transition-colors ${
                       currentPage === pageNum
                         ? 'bg-stone-900 text-white font-medium'
                         : 'border border-stone-300 hover:bg-stone-100 text-stone-700'
@@ -567,13 +577,13 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
                 <span className="px-1 text-stone-400">...</span>
                 <button
                   onClick={() => setCurrentPage(14)}
-                  className="w-8 h-8 rounded border border-stone-300 hover:bg-stone-100 text-stone-700 text-xs transition-colors"
+                  className="w-8 h-8 rounded-none border border-stone-300 hover:bg-stone-100 text-stone-700 text-xs transition-colors"
                 >
                   14
                 </button>
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(14, p + 1))}
-                  className="w-8 h-8 rounded border border-stone-300 hover:bg-stone-100 flex items-center justify-center text-stone-600 transition-colors"
+                  className="w-8 h-8 rounded-none border border-stone-300 hover:bg-stone-100 flex items-center justify-center text-stone-600 transition-colors"
                 >
                   &gt;
                 </button>
@@ -583,27 +593,54 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
         </div>
       </div>
 
-      {/* 4. BOTTOM PROJECT QUOTE BANNER matching Image 2 */}
-      <section className="bg-stone-900 text-white py-12 border-t border-stone-800">
+      {/* FLOATING PRODUCT COMPARISON TOOLBAR */}
+      {comparedProducts.length > 0 && (
+        <div className="fixed bottom-6 right-6 z-40 bg-stone-950 text-white px-5 py-3.5 shadow-2xl border border-stone-800 flex items-center gap-4 transition-all">
+          <div className="flex items-center gap-2.5">
+            <span className="w-6 h-6 rounded-full bg-[#7E6348] text-white flex items-center justify-center text-xs font-bold font-sans">
+              {comparedProducts.length}
+            </span>
+            <span className="text-xs font-sans tracking-wide text-stone-200">
+              {comparedProducts.length === 1
+                ? '1 product in comparison'
+                : `${comparedProducts.length} products selected (Max 3)`}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {onOpenComparisonModal && (
+              <button
+                onClick={onOpenComparisonModal}
+                className="px-3.5 py-1.5 bg-[#7E6348] hover:bg-[#A38A6B] text-white text-xs font-semibold uppercase tracking-[0.15em] transition-colors"
+              >
+                Compare Specs
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 4. BOTTOM PROJECT QUOTE BANNER */}
+      <section className="bg-[#1a1714] text-white py-12 border-t border-[#2a2520]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded bg-stone-800 border border-stone-700 flex items-center justify-center text-[#d5b282] shrink-0">
+              <div className="w-12 h-12 rounded-none bg-stone-800/80 border border-stone-700 flex items-center justify-center text-[#A38A6B] shrink-0">
                 <FileText className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-editorial text-xl sm:text-2xl font-normal text-white">
+                <h3 className="font-serif text-xl sm:text-2xl font-normal text-white">
                   Planning a Residential or Commercial Project?
                 </h3>
-                <p className="text-xs text-stone-400 font-light mt-0.5">
-                  Get expert advice, bulk pricing and a tailored quotation from our team.
+                <p className="text-xs text-stone-300 font-normal mt-0.5 font-sans">
+                  Get expert material advice, trade specification sheets, and tailored quotations from our architectural team.
                 </p>
               </div>
             </div>
 
             <button
               onClick={onOpenQuoteModal}
-              className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#d5b282] hover:bg-[#c5a880] text-stone-950 text-xs font-semibold uppercase tracking-[0.16em] rounded transition-all shrink-0 shadow-md"
+              className="inline-flex items-center gap-2 px-6 py-3.5 border border-[#7E6348] bg-[#7E6348] hover:bg-[#A38A6B] text-white text-xs font-semibold uppercase tracking-[0.16em] rounded-none transition-all shrink-0 shadow-md"
             >
               <span>REQUEST A PROJECT QUOTE</span>
               <ArrowRight className="w-3.5 h-3.5" />

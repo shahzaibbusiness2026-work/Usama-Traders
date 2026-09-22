@@ -31,15 +31,15 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   };
 
   const titleSizes = {
-    sm: 'text-[15px]',
-    md: 'text-[18px]',
-    lg: 'text-[22px]',
+    sm: 'text-[16px]',
+    md: 'text-[20px] sm:text-[22px]',
+    lg: 'text-[26px]',
   };
 
   const taglineSizes = {
-    sm: 'text-[7.5px] tracking-[0.24em]',
-    md: 'text-[8.5px] tracking-[0.22em]',
-    lg: 'text-[9.5px] tracking-[0.25em]',
+    sm: 'text-[8px] tracking-[0.24em]',
+    md: 'text-[9px] sm:text-[9.5px] tracking-[0.24em]',
+    lg: 'text-[10.5px] tracking-[0.25em]',
   };
 
   return (

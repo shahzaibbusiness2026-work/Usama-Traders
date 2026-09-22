@@ -33,7 +33,7 @@ import { SlabPriceEstimator } from './SlabPriceEstimator';
 import { Product360Viewer } from './Product360Viewer';
 import { Product360Badge } from '../common/Product360Badge';
 import { ARSurfaceVisualizerModal } from './ARSurfaceVisualizerModal';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, ArrowLeftRight } from 'lucide-react';
 import { ArchitecturalProductCard } from '../common/ArchitecturalProductCard';
 
 interface ProductDetailPageProps {
@@ -45,6 +45,10 @@ interface ProductDetailPageProps {
   onOpenQuoteModal: () => void;
   onOpenSampleModal: (productName?: string) => void;
   onOpen360Modal?: (product: Product) => void;
+  isCompared?: boolean;
+  onToggleCompare?: (product: Product) => void;
+  onOpenComparisonModal?: () => void;
+  comparedProducts?: Product[];
 }
 
 export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
@@ -56,6 +60,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   onOpenQuoteModal,
   onOpenSampleModal,
   onOpen360Modal,
+  isCompared = false,
+  onToggleCompare,
+  onOpenComparisonModal,
+  comparedProducts = [],
 }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [is360Active, setIs360Active] = useState(false);
@@ -309,59 +317,59 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           <div className="lg:col-span-5 space-y-5">
             {/* Category tag */}
             <div>
-              <span className="inline-block px-2.5 py-0.5 rounded bg-[#886d4b]/10 text-[#886d4b] text-[10px] font-medium tracking-[0.2em] uppercase border border-[#886d4b]/30">
+              <span className="inline-block px-2.5 py-0.5 rounded bg-[#7E6348]/10 text-[#7E6348] text-xs font-semibold tracking-[0.25em] uppercase border border-[#7E6348]/30 font-sans">
                 Marble Collection
               </span>
             </div>
 
             {/* Product Title */}
-            <h1 className="font-editorial text-3xl sm:text-4xl text-stone-900 font-normal tracking-[-0.015em] leading-tight">
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-stone-900 font-normal tracking-tight leading-tight">
               {product.name}
             </h1>
 
             {/* Reviews */}
             <div className="flex items-center space-x-2 text-xs text-stone-600">
-              <div className="flex items-center text-[#886d4b]">
+              <div className="flex items-center text-[#7E6348]">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 fill-[#886d4b] text-[#886d4b]" />
+                  <Star key={i} className="w-3.5 h-3.5 fill-[#7E6348] text-[#7E6348]" />
                 ))}
               </div>
               <span className="font-medium text-stone-900">4.8</span>
-              <span className="text-stone-400 font-light">(36 verified projects)</span>
+              <span className="text-stone-500 font-normal">(36 verified projects)</span>
               <span className="text-stone-300">|</span>
               <button
                 onClick={() => alert('Review submitted for moderation.')}
-                className="hover:text-[#886d4b] transition-colors"
+                className="hover:text-[#7E6348] transition-colors"
               >
                 Inquire Specifications
               </button>
             </div>
 
             {/* Narrative description */}
-            <p className="text-xs text-stone-600 leading-relaxed font-light">
+            <p className="text-sm text-stone-600 leading-relaxed font-normal">
               {product.description ||
-                'A luxurious Italian marble renowned for its elegant golden veining on a crisp white background. Verona Calacotta Gold brings timeless beauty and sophistication to any space.'}
+                'A luxurious Italian marble renowned for its elegant golden veining on a crisp white background. Verona Calacotta Gold brings timeless beauty and sophistication to any architectural space.'}
             </p>
 
             {/* Price block */}
             <div className="pt-2 pb-1 border-y border-stone-200">
               <div className="flex items-baseline space-x-3">
-                <span className="font-editorial text-3xl font-normal text-stone-900 tracking-[-0.01em]">
+                <span className="font-serif text-3xl sm:text-4xl font-normal text-stone-900 tracking-tight">
                   {product.currency} {product.price.toLocaleString()}
                 </span>
-                <span className="text-xs text-stone-500 font-light">/ per sq. ft.</span>
+                <span className="text-xs text-stone-500 font-normal">/ per sq. ft.</span>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-medium tracking-wide">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
                   QUARRY IMPORT READY
                 </span>
               </div>
-              <p className="text-[10px] text-stone-400 mt-1 font-light">
+              <p className="text-[12px] text-stone-500 mt-1 font-normal">
                 Price finalized based on batch calibration, thickness, and vein consistency.
               </p>
               <div className="pt-2">
                 <a
                   href="#slab-price-estimator"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#fbf8f3] text-[#886d4b] border border-[#886d4b]/30 text-[11px] font-medium hover:bg-[#886d4b] hover:text-white transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#F5F1EA] text-[#7E6348] border border-[#7E6348]/30 text-xs font-medium hover:bg-[#7E6348] hover:text-white transition-colors"
                 >
                   <Calculator className="w-3.5 h-3.5" />
                   <span>Estimate Project Cost by Slab Dimensions &darr;</span>
@@ -370,17 +378,17 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             </div>
 
             {/* Specifications Matrix Table */}
-            <div className="text-xs border border-stone-200 rounded-lg overflow-hidden bg-white shadow-2xs divide-y divide-stone-100">
+            <div className="text-xs sm:text-[13px] border border-stone-200 rounded-lg overflow-hidden bg-white shadow-2xs divide-y divide-stone-100">
               <div className="grid grid-cols-3 p-2.5">
-                <span className="text-stone-500 font-light">Finish</span>
+                <span className="text-stone-500 font-normal">Finish</span>
                 <span className="col-span-2 font-medium text-stone-800">Polished (High Gloss)</span>
               </div>
               <div className="grid grid-cols-3 p-2.5">
-                <span className="text-stone-500 font-light">Available Sizes</span>
+                <span className="text-stone-500 font-normal">Available Sizes</span>
                 <span className="col-span-2 font-medium text-stone-800">Custom Slab (Avg. 9–11 ft x 5–6 ft)</span>
               </div>
               <div className="grid grid-cols-3 p-2.5 items-center">
-                <span className="text-stone-500 font-light">Thickness</span>
+                <span className="text-stone-500 font-normal">Thickness</span>
                 <div className="col-span-2 flex items-center space-x-1.5">
                   {['18 mm', '20 mm', '30 mm'].map((th) => (
                     <button
@@ -388,7 +396,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                       onClick={() => setSelectedThickness(th)}
                       className={`px-2 py-0.5 rounded text-[11px] font-medium border transition-colors ${
                         selectedThickness === th
-                          ? 'border-[#886d4b] bg-[#fbf8f3] text-[#886d4b]'
+                          ? 'border-[#7E6348] bg-[#F5F1EA] text-[#7E6348]'
                           : 'border-stone-200 text-stone-600 hover:border-stone-400'
                       }`}
                     >
@@ -398,19 +406,19 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 </div>
               </div>
               <div className="grid grid-cols-3 p-2.5">
-                <span className="text-stone-500 font-light">Surface Look</span>
+                <span className="text-stone-500 font-normal">Surface Look</span>
                 <span className="col-span-2 font-medium text-stone-800">White with Bold Golden Veins</span>
               </div>
               <div className="grid grid-cols-3 p-2.5">
-                <span className="text-stone-500 font-light">Application</span>
+                <span className="text-stone-500 font-normal">Application</span>
                 <span className="col-span-2 font-medium text-stone-800">Indoor (Walls, Flooring, Countertops)</span>
               </div>
               <div className="grid grid-cols-3 p-2.5">
-                <span className="text-stone-500 font-light">Edges</span>
+                <span className="text-stone-500 font-normal">Edges</span>
                 <span className="col-span-2 font-medium text-stone-800">Straight, Bevel, Mitre (Custom)</span>
               </div>
               <div className="grid grid-cols-3 p-2.5">
-                <span className="text-stone-500 font-light">Coverage</span>
+                <span className="text-stone-500 font-normal">Coverage</span>
                 <span className="col-span-2 font-medium text-stone-800">Approx. 15.5 sq. ft. per 18mm slab</span>
               </div>
             </div>
@@ -419,7 +427,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             <div className="space-y-1.5 pt-1">
               <div className="flex items-center justify-between text-xs text-stone-700">
                 <span className="font-medium">Quantity (Slabs)</span>
-                <span className="text-[11px] text-stone-400 font-light">Specify required slab quantity for layout batching.</span>
+                <span className="text-[12px] text-stone-500 font-normal">Specify required slab quantity for layout batching.</span>
               </div>
               <div className="flex items-center border border-stone-300 rounded w-32 bg-white">
                 <button
@@ -443,37 +451,65 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               {/* High-Impact AR View Camera Action Button */}
               <button
                 onClick={() => setIsARVisualizerOpen(true)}
-                className="w-full py-3.5 bg-gradient-to-r from-stone-900 via-[#1f1b16] to-stone-900 hover:from-[#2a241d] hover:to-stone-850 text-white text-xs font-medium rounded flex items-center justify-between px-4 border border-[#886d4b]/60 hover:border-[#d5c1a4] shadow-sm transition-all group"
+                className="w-full py-3.5 bg-gradient-to-r from-stone-900 via-[#1f1b16] to-stone-900 hover:from-[#2a241d] hover:to-stone-850 text-white text-xs font-medium rounded flex items-center justify-between px-4 border border-[#7E6348]/60 hover:border-[#A38A6B] shadow-sm transition-all group"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-full bg-[#886d4b]/30 border border-[#d5c1a4] flex items-center justify-center text-[#d5c1a4] group-hover:scale-110 transition-transform shadow-xs">
+                  <div className="w-7 h-7 rounded-full bg-[#7E6348]/30 border border-[#A38A6B] flex items-center justify-center text-[#A38A6B] group-hover:scale-110 transition-transform shadow-xs">
                     <Camera className="w-3.5 h-3.5" />
                   </div>
                   <div className="text-left">
                     <div className="font-medium flex items-center gap-1.5 text-stone-100">
                       <span>AR View: See on Floor or Wall</span>
-                      <span className="px-1.5 py-0.5 rounded bg-[#886d4b] text-white text-[9px] font-mono font-medium uppercase tracking-wider">
+                      <span className="px-1.5 py-0.5 rounded bg-[#7E6348] text-white text-[9px] font-mono font-medium uppercase tracking-wider">
                         Live 3D
                       </span>
                     </div>
-                    <p className="text-[10px] text-stone-400 font-light">
+                    <p className="text-[11px] text-stone-400 font-normal">
                       Point device camera to visualize real-scale slab in your room
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center text-[#d5c1a4] text-xs font-medium gap-1 group-hover:translate-x-0.5 transition-transform">
+                <div className="flex items-center text-[#A38A6B] text-xs font-medium gap-1 group-hover:translate-x-0.5 transition-transform">
                   <ScanLine className="w-4 h-4" />
                 </div>
               </button>
 
+              {/* Add to Specification Quote Button */}
               <button
                 onClick={() => onAddToCart(product, quantity, selectedThickness)}
-                className="w-full py-3.5 bg-[#886d4b] hover:bg-[#73593b] text-white text-xs font-medium tracking-wider uppercase rounded flex items-center justify-center gap-2 shadow-md transition-all group"
+                className="w-full py-3.5 bg-[#7E6348] hover:bg-[#A38A6B] text-white text-xs font-semibold tracking-[0.16em] uppercase rounded flex items-center justify-center gap-2 shadow-md transition-all group"
               >
-                <FileText className="w-4 h-4 text-[#d5c1a4]" />
+                <FileText className="w-4 h-4 text-stone-100" />
                 <span>Add to Specification Quote</span>
                 <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
               </button>
+
+              {/* Compare Specifications Button */}
+              {onToggleCompare && (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => onToggleCompare(product)}
+                    className={`flex-1 py-3 px-4 rounded border text-xs font-semibold uppercase tracking-[0.14em] flex items-center justify-center gap-2 transition-all ${
+                      isCompared
+                        ? 'bg-[#7E6348] text-white border-[#7E6348] shadow-sm'
+                        : 'bg-white hover:bg-stone-50 text-stone-800 border-stone-300 hover:border-[#7E6348]'
+                    }`}
+                  >
+                    <ArrowLeftRight className="w-3.5 h-3.5" />
+                    <span>{isCompared ? 'Added to Comparison (Remove)' : 'Compare Specifications'}</span>
+                  </button>
+
+                  {comparedProducts.length > 0 && onOpenComparisonModal && (
+                    <button
+                      onClick={onOpenComparisonModal}
+                      className="py-3 px-4 rounded bg-stone-900 hover:bg-[#7E6348] text-white text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors"
+                      title="Open comparison modal"
+                    >
+                      <span>View ({comparedProducts.length}/3)</span>
+                    </button>
+                  )}
+                </div>
+              )}
 
               <button
                 onClick={handleWhatsAppChat}
@@ -484,23 +520,23 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 </div>
                 <span>Direct Architectural Concierge</span>
                 <span className="text-stone-400 font-normal">|</span>
-                <span className="text-stone-600 font-light">Instant WhatsApp Specs &rarr;</span>
+                <span className="text-stone-600 font-normal">Instant WhatsApp Specs &rarr;</span>
               </button>
             </div>
 
             {/* 3 Guarantees */}
-            <div className="grid grid-cols-3 gap-2 pt-2 text-[11px] text-stone-600 border-t border-stone-200">
+            <div className="grid grid-cols-3 gap-2 pt-2 text-[12px] text-stone-600 border-t border-stone-200">
               <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-[#886d4b] shrink-0" />
-                <span className="font-light">100% Verified Import</span>
+                <ShieldCheck className="w-4 h-4 text-[#7E6348] shrink-0" />
+                <span className="font-normal">100% Verified Import</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Truck className="w-4 h-4 text-[#886d4b] shrink-0" />
-                <span className="font-light">A-Frame Freight</span>
+                <Truck className="w-4 h-4 text-[#7E6348] shrink-0" />
+                <span className="font-normal">A-Frame Freight</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Users className="w-4 h-4 text-[#886d4b] shrink-0" />
-                <span className="font-light">Architectural Support</span>
+                <Users className="w-4 h-4 text-[#7E6348] shrink-0" />
+                <span className="font-normal">Architectural Support</span>
               </div>
             </div>
 
@@ -721,6 +757,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 product={slab}
                 index={idx}
                 isWishlisted={wishlistIds.includes(slab.id)}
+                isCompared={comparedProducts.some((p) => p.id === slab.id)}
+                onToggleCompare={onToggleCompare}
                 onSelectProduct={(p) => {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                   setActiveView('product');

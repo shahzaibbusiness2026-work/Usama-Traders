@@ -42,27 +42,27 @@ export const SampleModal: React.FC<SampleModalProps> = ({
 
         {isDone ? (
           <div className="text-center py-8 space-y-3">
-            <div className="w-12 h-12 bg-[#886d4b]/10 text-[#886d4b] border border-[#886d4b]/30 rounded-full flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 bg-[#7E6348]/10 text-[#7E6348] border border-[#7E6348]/30 rounded-full flex items-center justify-center mx-auto">
               <CheckCircle className="w-6 h-6" />
             </div>
-            <h3 className="font-editorial text-xl font-normal text-stone-900 tracking-[-0.01em]">
+            <h3 className="font-serif text-xl font-normal text-stone-900 tracking-tight">
               Sample Box Queued for Dispatch
             </h3>
-            <p className="text-xs text-stone-600 leading-relaxed font-light">
+            <p className="text-xs text-stone-600 leading-relaxed font-normal">
               Tracking code generated: <strong className="font-mono text-stone-900">PK-SLM-9482</strong>. Your architectural swatch package will be dispatched via insured express freight to {city}.
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="border-b border-stone-100 pb-3">
-              <div className="flex items-center gap-2 text-[#886d4b] text-[10px] font-medium tracking-[0.26em] uppercase font-sans">
+              <div className="flex items-center gap-2 text-[#7E6348] tracking-[0.25em] text-xs font-semibold uppercase font-sans">
                 <Package className="w-3.5 h-3.5" />
                 <span>Express Material Sample Desk</span>
               </div>
-              <h2 className="font-editorial text-2xl font-normal text-stone-900 tracking-[-0.015em] mt-1">
+              <h2 className="font-serif text-2xl font-normal text-stone-900 tracking-tight mt-1">
                 Order Architectural Swatches
               </h2>
-              <p className="text-xs text-stone-500 font-light mt-0.5">
+              <p className="text-xs text-stone-600 font-normal mt-0.5">
                 Experience tactile stone grain, honed textures, and marble veining in studio.
               </p>
             </div>
@@ -82,7 +82,7 @@ export const SampleModal: React.FC<SampleModalProps> = ({
               <select
                 value={selectedBox}
                 onChange={(e) => setSelectedBox(e.target.value)}
-                className="w-full text-xs px-3 py-2 border border-stone-300 rounded focus:border-[#886d4b] focus:outline-none bg-white"
+                className="w-full text-xs px-3 py-2 border border-stone-300 rounded focus:border-[#7E6348] focus:outline-none bg-white"
               >
                 <option>Architect Presentation Swatch Box (4 Finish Tiles)</option>
                 <option>Full Hand Cut Stone Swatch (150 x 150 mm)</option>
@@ -99,7 +99,7 @@ export const SampleModal: React.FC<SampleModalProps> = ({
                   placeholder="e.g. Ar. Zara Ali"
                   value={recipient}
                   onChange={(e) => setRecipient(e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-stone-300 rounded focus:border-[#886d4b] focus:outline-none"
+                  className="w-full text-xs px-3 py-2 border border-stone-300 rounded focus:border-[#7E6348] focus:outline-none"
                 />
               </div>
 
@@ -111,7 +111,7 @@ export const SampleModal: React.FC<SampleModalProps> = ({
                   placeholder="0321-7654321"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-stone-300 rounded focus:border-[#886d4b] focus:outline-none font-mono"
+                  className="w-full text-xs px-3 py-2 border border-stone-300 rounded focus:border-[#7E6348] focus:outline-none font-mono"
                 />
               </div>
             </div>
@@ -125,7 +125,7 @@ export const SampleModal: React.FC<SampleModalProps> = ({
                   placeholder="Studio or Site address"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-stone-300 rounded focus:border-[#886d4b] focus:outline-none"
+                  className="w-full text-xs px-3 py-2 border border-stone-300 rounded focus:border-[#7E6348] focus:outline-none"
                 />
               </div>
 
@@ -134,7 +134,7 @@ export const SampleModal: React.FC<SampleModalProps> = ({
                 <select
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-stone-300 rounded focus:border-[#886d4b] focus:outline-none bg-white"
+                  className="w-full text-xs px-3 py-2 border border-stone-300 rounded focus:border-[#7E6348] focus:outline-none bg-white"
                 >
                   <option>Lahore</option>
                   <option>Islamabad</option>
@@ -147,9 +147,9 @@ export const SampleModal: React.FC<SampleModalProps> = ({
 
             <button
               type="submit"
-              className="w-full py-3 bg-[#886d4b] hover:bg-[#73593b] text-white text-xs font-medium tracking-wider uppercase rounded shadow-md transition-colors flex items-center justify-center gap-2"
+              className="w-full py-3 bg-[#7E6348] hover:bg-[#A38A6B] text-white text-xs font-semibold tracking-[0.16em] uppercase rounded shadow-md transition-colors flex items-center justify-center gap-2"
             >
-              <Truck className="w-4 h-4 text-[#d5c1a4]" />
+              <Truck className="w-4 h-4 text-stone-100" />
               <span>Confirm & Dispatch Sample Box</span>
             </button>
           </form>

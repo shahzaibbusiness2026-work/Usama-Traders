@@ -97,15 +97,15 @@ export const Product360ReviewModal: React.FC<Product360ReviewModalProps> = ({
           {/* Header */}
           <div className="bg-stone-950 px-6 py-4 border-b border-stone-800 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#856a42]/20 border border-[#856a42] flex items-center justify-center text-[#c5a880]">
+              <div className="w-9 h-9 rounded-full bg-[#7E6348]/20 border border-[#7E6348] flex items-center justify-center text-[#A38A6B]">
                 <RotateCcw className="w-4 h-4 animate-spin" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="font-serif text-base sm:text-lg font-bold text-white">
+                  <h3 className="font-serif text-base sm:text-lg font-normal text-white">
                     {product.name}
                   </h3>
-                  <span className="px-2 py-0.5 rounded-full bg-[#856a42]/20 text-[#c5a880] border border-[#856a42]/40 text-[9px] font-mono uppercase tracking-wider font-bold">
+                  <span className="px-2 py-0.5 rounded-full bg-[#7E6348]/20 text-[#A38A6B] border border-[#7E6348]/40 text-[9px] font-mono uppercase tracking-wider font-bold">
                     360° Studio Review
                   </span>
                 </div>
@@ -130,7 +130,7 @@ export const Product360ReviewModal: React.FC<Product360ReviewModalProps> = ({
               onClick={() => setActiveTab('360')}
               className={`py-3 border-b-2 transition-colors flex items-center gap-2 ${
                 activeTab === '360'
-                  ? 'border-[#c5a880] text-[#c5a880]'
+                  ? 'border-[#A38A6B] text-[#A38A6B]'
                   : 'border-transparent text-stone-400 hover:text-stone-200'
               }`}
             >
@@ -142,7 +142,7 @@ export const Product360ReviewModal: React.FC<Product360ReviewModalProps> = ({
               onClick={() => setActiveTab('reviews')}
               className={`py-3 border-b-2 transition-colors flex items-center gap-2 ${
                 activeTab === 'reviews'
-                  ? 'border-[#c5a880] text-[#c5a880]'
+                  ? 'border-[#A38A6B] text-[#A38A6B]'
                   : 'border-transparent text-stone-400 hover:text-stone-200'
               }`}
             >
@@ -154,7 +154,7 @@ export const Product360ReviewModal: React.FC<Product360ReviewModalProps> = ({
               onClick={() => setActiveTab('specs')}
               className={`py-3 border-b-2 transition-colors flex items-center gap-2 ${
                 activeTab === 'specs'
-                  ? 'border-[#c5a880] text-[#c5a880]'
+                  ? 'border-[#A38A6B] text-[#A38A6B]'
                   : 'border-transparent text-stone-400 hover:text-stone-200'
               }`}
             >
@@ -319,7 +319,7 @@ export const Product360ReviewModal: React.FC<Product360ReviewModalProps> = ({
                   onClose();
                   onOpenQuote?.(product.name);
                 }}
-                className="px-5 py-2.5 rounded-lg bg-[#856a42] hover:bg-[#735a34] text-white text-xs font-bold shadow-md transition-colors flex items-center gap-2"
+                className="px-5 py-2.5 rounded-none bg-[#7E6348] hover:bg-[#A38A6B] text-white text-xs font-semibold tracking-[0.12em] uppercase shadow-md transition-colors flex items-center gap-2"
               >
                 <span>Request Project Quote</span>
                 <FileText className="w-3.5 h-3.5" />
