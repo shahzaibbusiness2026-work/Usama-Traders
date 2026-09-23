@@ -177,7 +177,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
               <div className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-800 font-sans">
                 BATHROOM & SANITARY COLLECTION
               </div>
-              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-zinc-900 font-light tracking-tight leading-[1.15]">
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-zinc-900 font-medium tracking-tight leading-[1.15]">
                 Refined Living Starts with Better Surfaces
               </h1>
               <p className="text-sm lg:text-base text-zinc-600 leading-relaxed font-normal max-w-lg">
@@ -218,7 +218,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({
         {/* Header Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-[#E5DFD5] gap-4 mb-6">
           <div>
-            <h2 className="font-serif text-2xl lg:text-4xl font-normal text-zinc-900 tracking-tight">
+            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-medium text-zinc-900 tracking-tight">
               Bathroom & Sanitary Collections
             </h2>
           </div>

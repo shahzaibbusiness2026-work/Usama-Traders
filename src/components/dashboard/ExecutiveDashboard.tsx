@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
   Boxes,
@@ -24,6 +24,10 @@ import {
   Sparkles,
   ShieldCheck,
   AlertTriangle,
+  PanelLeftClose,
+  PanelLeftOpen,
+  PanelLeft,
+  X,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -61,6 +65,24 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
   const [dateRange] = useState('01 Nov 2024 – 30 Nov 2024');
   const [pipelineFilter, setPipelineFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  // Keyboard shortcut Ctrl+B or Cmd+B to toggle sidebar
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        if (window.innerWidth >= 1280) {
+          setSidebarCollapsed((prev) => !prev);
+        } else {
+          setMobileSidebarOpen((prev) => !prev);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const sidebarNavItems = [
     { label: 'Overview Dashboard', icon: LayoutDashboard },
@@ -119,18 +141,54 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
   });
 
   return (
-    <div className="min-h-screen bg-zinc-50/60 flex flex-col xl:flex-row text-zinc-900 font-sans">
-      {/* 1. DARK ARCHITECTURAL SIDEBAR */}
-      <aside className="w-full xl:w-64 bg-zinc-950 text-zinc-300 p-5 flex flex-col justify-between shrink-0 border-r border-zinc-800">
+    <div className="min-h-screen bg-zinc-50/70 flex flex-col xl:flex-row text-zinc-900 font-sans">
+      {/* 1. DESKTOP ARCHITECTURAL SIDEBAR (COLLAPSIBLE) */}
+      <aside
+        className={`hidden xl:flex flex-col justify-between shrink-0 bg-zinc-950 text-zinc-300 border-r border-zinc-800/80 transition-all duration-300 select-none z-20 ${
+          sidebarCollapsed ? 'w-20 p-3.5' : 'w-64 p-5'
+        }`}
+      >
         <div className="space-y-6">
-          {/* Logo */}
-          <div className="pb-4 border-b border-zinc-800/80">
-            <BrandLogo
-              variant="light"
-              size="sm"
-              showTagline={false}
-              onClick={() => setActiveView('home')}
-            />
+          {/* Logo & Collapse Toggle */}
+          <div className="pb-4 border-b border-zinc-800/80 flex items-center justify-between gap-2">
+            {!sidebarCollapsed ? (
+              <>
+                <BrandLogo
+                  variant="light"
+                  size="sm"
+                  showTagline={false}
+                  onClick={() => setActiveView('home')}
+                />
+                <button
+                  onClick={() => setSidebarCollapsed(true)}
+                  className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors"
+                  title="Collapse Sidebar (Ctrl+B)"
+                  aria-label="Collapse Sidebar"
+                >
+                  <PanelLeftClose className="w-4 h-4" />
+                </button>
+              </>
+            ) : (
+              <div className="w-full flex flex-col items-center gap-3">
+                <div
+                  onClick={() => setActiveView('home')}
+                  className="w-10 h-10 rounded-lg bg-zinc-900 border border-amber-500/40 flex items-center justify-center cursor-pointer hover:border-amber-400 transition-all"
+                  title="Saleem Traders - Return to Home"
+                >
+                  <span className="font-serif text-[#d5b282] font-semibold text-xs tracking-tight">
+                    ST
+                  </span>
+                </div>
+                <button
+                  onClick={() => setSidebarCollapsed(false)}
+                  className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors"
+                  title="Expand Sidebar (Ctrl+B)"
+                  aria-label="Expand Sidebar"
+                >
+                  <PanelLeftOpen className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Navigation Links */}
@@ -142,14 +200,23 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                 <button
                   key={item.label}
                   onClick={() => setActiveTab(item.label)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs transition-all ${
+                  title={sidebarCollapsed ? item.label : undefined}
+                  className={`w-full flex items-center rounded-xl text-xs font-medium transition-all ${
+                    sidebarCollapsed
+                      ? 'justify-center p-3'
+                      : 'gap-3 px-3.5 py-2.5'
+                  } ${
                     isActive
-                      ? 'bg-zinc-800/80 text-white font-medium shadow-xs'
-                      : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+                      ? 'bg-zinc-800/90 text-white shadow-xs font-semibold'
+                      : 'text-zinc-400 hover:text-white hover:bg-zinc-900/80'
                   }`}
                 >
-                  <Icon className="w-4 h-4 shrink-0 text-amber-600/90" />
-                  <span className="truncate">{item.label}</span>
+                  <Icon
+                    className={`w-4 h-4 shrink-0 ${
+                      isActive ? 'text-amber-500' : 'text-zinc-400'
+                    }`}
+                  />
+                  {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
                 </button>
               );
             })}
@@ -157,50 +224,176 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         </div>
 
         {/* Pinned Bottom Tenant Profile Card */}
-        <div className="pt-6 mt-6 border-t border-zinc-800/80 space-y-4">
-          <div className="p-3 rounded-xl bg-zinc-900/80 border border-zinc-800 flex items-center gap-3">
-            <div className="relative">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-700 to-amber-900 text-white font-serif font-medium text-xs flex items-center justify-center">
-                AH
+        <div className="pt-5 mt-6 border-t border-zinc-800/80 space-y-3">
+          {!sidebarCollapsed ? (
+            <div className="p-3 rounded-xl bg-zinc-900/90 border border-zinc-800/80 flex items-center gap-3">
+              <div className="relative">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-700 to-amber-900 text-white font-serif font-medium text-xs flex items-center justify-center">
+                  AH
+                </div>
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-zinc-950" />
               </div>
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-zinc-950" />
+              <div className="min-w-0 flex-1">
+                <h5 className="text-xs font-semibold text-white truncate">Ahmad Hassan</h5>
+                <p className="text-[11px] text-zinc-400 truncate">Executive Director</p>
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <h5 className="text-xs font-medium text-white truncate">Ahmad Hassan</h5>
-              <p className="text-[11px] text-zinc-400 truncate">Executive Director</p>
+          ) : (
+            <div className="flex justify-center" title="Ahmad Hassan (Executive Director)">
+              <div className="relative">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-700 to-amber-900 text-white font-serif font-medium text-xs flex items-center justify-center">
+                  AH
+                </div>
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-zinc-950" />
+              </div>
             </div>
-          </div>
+          )}
 
           <button
             onClick={() => setActiveView('home')}
-            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700 text-xs transition-colors"
+            title={sidebarCollapsed ? "Return to Storefront" : undefined}
+            className={`w-full flex items-center rounded-lg border border-zinc-800/80 text-zinc-400 hover:text-white hover:border-zinc-700 text-xs transition-colors ${
+              sidebarCollapsed ? 'justify-center p-2.5' : 'justify-center gap-2 py-2 px-3'
+            }`}
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Storefront</span>
+            <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
+            {!sidebarCollapsed && <span>Return to Storefront</span>}
           </button>
         </div>
       </aside>
 
-      {/* 2. MAIN DASHBOARD CONTENT */}
+      {/* 2. MOBILE / TABLET SIDEBAR DRAWER (OVERLAY) */}
+      {mobileSidebarOpen && (
+        <div className="fixed inset-0 z-50 xl:hidden">
+          {/* Backdrop */}
+          <div
+            onClick={() => setMobileSidebarOpen(false)}
+            className="fixed inset-0 bg-zinc-950/70 backdrop-blur-xs transition-opacity animate-in fade-in"
+          />
+
+          {/* Slide-over Drawer */}
+          <div className="fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-zinc-950 text-zinc-300 p-5 flex flex-col justify-between z-50 border-r border-zinc-800 shadow-2xl animate-in slide-in-from-left duration-200">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
+                <BrandLogo
+                  variant="light"
+                  size="sm"
+                  showTagline={false}
+                  onClick={() => {
+                    setMobileSidebarOpen(false);
+                    setActiveView('home');
+                  }}
+                />
+                <button
+                  onClick={() => setMobileSidebarOpen(false)}
+                  className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900"
+                  aria-label="Close menu"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <nav className="space-y-1">
+                {sidebarNavItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.label;
+                  return (
+                    <button
+                      key={item.label}
+                      onClick={() => {
+                        setActiveTab(item.label);
+                        setMobileSidebarOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                        isActive
+                          ? 'bg-zinc-800/90 text-white font-semibold'
+                          : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+                      }`}
+                    >
+                      <Icon
+                        className={`w-4 h-4 shrink-0 ${
+                          isActive ? 'text-amber-500' : 'text-zinc-400'
+                        }`}
+                      />
+                      <span className="truncate">{item.label}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+
+            <div className="pt-5 mt-6 border-t border-zinc-800 space-y-3">
+              <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center gap-3">
+                <div className="relative">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-700 to-amber-900 text-white font-serif font-medium text-xs flex items-center justify-center">
+                    AH
+                  </div>
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-zinc-950" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h5 className="text-xs font-semibold text-white truncate">Ahmad Hassan</h5>
+                  <p className="text-[11px] text-zinc-400 truncate">Executive Director</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  setMobileSidebarOpen(false);
+                  setActiveView('home');
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700 text-xs transition-colors"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Return to Storefront</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. MAIN DASHBOARD CONTENT */}
       <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
         {/* Top Header Bar */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-zinc-100 px-6 lg:px-10 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-30">
-          {/* Search Input */}
-          <div className="relative flex-1 max-w-md">
-            <input
-              type="text"
-              placeholder="Search projects, customers, products, or quotations..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs placeholder-zinc-400 focus:outline-none focus:border-amber-800 focus:bg-white transition-colors"
-            />
-            <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-2.5" />
+        <header className="bg-white/90 backdrop-blur-md border-b border-zinc-200/80 px-4 sm:px-6 lg:px-10 py-3.5 flex flex-wrap items-center justify-between gap-3 sticky top-0 z-30">
+          <div className="flex items-center gap-3 flex-1 max-w-lg">
+            {/* Sidebar Toggle Button (Desktop & Mobile) */}
+            <button
+              id="dashboard-sidebar-toggle"
+              onClick={() => {
+                if (window.innerWidth >= 1280) {
+                  setSidebarCollapsed((prev) => !prev);
+                } else {
+                  setMobileSidebarOpen((prev) => !prev);
+                }
+              }}
+              className="p-2 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-100 text-zinc-700 hover:text-zinc-900 transition-colors shadow-2xs flex items-center justify-center shrink-0"
+              title={sidebarCollapsed ? "Expand Sidebar (Ctrl+B)" : "Collapse Sidebar (Ctrl+B)"}
+              aria-label="Toggle Sidebar"
+            >
+              {sidebarCollapsed ? (
+                <PanelLeftOpen className="w-4 h-4 text-zinc-700" />
+              ) : (
+                <PanelLeftClose className="w-4 h-4 text-zinc-700" />
+              )}
+            </button>
+
+            {/* Search Input */}
+            <div className="relative flex-1">
+              <input
+                type="text"
+                placeholder="Search projects, customers, products, or quotations..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs placeholder-zinc-400 focus:outline-none focus:border-amber-800 focus:bg-white transition-colors"
+              />
+              <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-2.5" />
+            </div>
           </div>
 
           {/* Right Tools & Actions */}
-          <div className="flex items-center gap-3 ml-auto">
+          <div className="flex items-center gap-2.5 ml-auto">
             {/* Date Range Picker */}
-            <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 border border-zinc-200 rounded-xl text-xs text-zinc-600 bg-white shadow-2xs">
+            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 border border-zinc-200 rounded-xl text-xs font-medium text-zinc-600 bg-white shadow-2xs">
               <Calendar className="w-3.5 h-3.5 text-zinc-400" />
               <span>{dateRange}</span>
               <ChevronDown className="w-3 h-3 text-zinc-400" />
@@ -235,40 +428,40 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         </header>
 
         {/* Content Body with Max-W-7XL & Standardized Spacing */}
-        <main className="max-w-7xl mx-auto w-full p-6 lg:p-10 space-y-8">
+        <main className="max-w-7xl mx-auto w-full p-5 sm:p-6 lg:p-10 space-y-8">
           {/* Greeting Row */}
           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
             <div>
               <span className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-800 font-sans">
                 Executive Analytics & Pipeline
               </span>
-              <h1 className="font-serif text-2xl lg:text-4xl font-normal text-zinc-900 tracking-tight mt-1">
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-[40px] font-medium text-zinc-900 tracking-tight mt-1 leading-snug">
                 Good Morning, Ahmad
               </h1>
-              <p className="text-sm lg:text-base text-zinc-600 leading-relaxed font-normal mt-1">
+              <p className="text-sm sm:text-base text-zinc-600 leading-relaxed font-normal mt-1 max-w-2xl">
                 Here's what's happening with your business and specification queue today.
               </p>
             </div>
             <div className="hidden sm:block text-right">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200/60 rounded-full text-xs font-medium text-amber-900">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200/60 rounded-full text-xs font-semibold text-amber-900">
                 <Sparkles className="w-3.5 h-3.5 text-amber-800" />
                 <span>Enterprise Suite • FY2024</span>
               </div>
             </div>
           </div>
 
-          {/* 4 KPI METRIC CARDS (BORDERLESS WHITE CARDS WITH SHADOW & TREND BADGES) */}
+          {/* 4 KPI METRIC CARDS */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {/* Card 1: Monthly Revenue */}
-            <div className="bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+            <div className="bg-white p-6 rounded-2xl border border-zinc-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-zinc-500">Monthly Revenue</span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Monthly Revenue</span>
                 <span className="p-2 rounded-xl bg-zinc-50 text-zinc-700 border border-zinc-100">
                   <TrendingUp className="w-4 h-4 text-amber-800" />
                 </span>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-semibold text-zinc-900 tracking-tight">
+                <div className="text-3xl lg:text-[36px] font-bold text-zinc-900 tracking-tight font-sans">
                   Rs. 48.6M
                 </div>
                 <div className="flex items-center gap-2 mt-2">
@@ -276,21 +469,21 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                     <ArrowUpRight className="w-3 h-3 mr-0.5" />
                     +12%
                   </span>
-                  <span className="text-xs text-zinc-400 font-normal">vs last month</span>
+                  <span className="text-xs text-zinc-500 font-medium">vs last month</span>
                 </div>
               </div>
             </div>
 
             {/* Card 2: Active Pipeline */}
-            <div className="bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+            <div className="bg-white p-6 rounded-2xl border border-zinc-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-zinc-500">Active Pipeline</span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Active Pipeline</span>
                 <span className="p-2 rounded-xl bg-zinc-50 text-zinc-700 border border-zinc-100">
                   <FileText className="w-4 h-4 text-amber-800" />
                 </span>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-semibold text-zinc-900 tracking-tight">
+                <div className="text-3xl lg:text-[36px] font-bold text-zinc-900 tracking-tight font-sans">
                   Rs. 128.5M
                 </div>
                 <div className="flex items-center gap-2 mt-2">
@@ -298,21 +491,21 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                     <ArrowUpRight className="w-3 h-3 mr-0.5" />
                     +8%
                   </span>
-                  <span className="text-xs text-zinc-400 font-normal">vs last month</span>
+                  <span className="text-xs text-zinc-500 font-medium">vs last month</span>
                 </div>
               </div>
             </div>
 
             {/* Card 3: Warehouse Slabs */}
-            <div className="bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+            <div className="bg-white p-6 rounded-2xl border border-zinc-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-zinc-500">Warehouse Slabs</span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Warehouse Slabs</span>
                 <span className="p-2 rounded-xl bg-zinc-50 text-zinc-700 border border-zinc-100">
                   <Boxes className="w-4 h-4 text-zinc-700" />
                 </span>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-semibold text-zinc-900 tracking-tight">
+                <div className="text-3xl lg:text-[36px] font-bold text-zinc-900 tracking-tight font-sans">
                   1,420
                 </div>
                 <div className="flex items-center gap-2 mt-2">
@@ -320,21 +513,21 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                     <ArrowDownRight className="w-3 h-3 mr-0.5" />
                     -6%
                   </span>
-                  <span className="text-xs text-zinc-400 font-normal">allocated to jobs</span>
+                  <span className="text-xs text-zinc-500 font-medium">allocated to jobs</span>
                 </div>
               </div>
             </div>
 
             {/* Card 4: Pending Samples */}
-            <div className="bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+            <div className="bg-white p-6 rounded-2xl border border-zinc-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-zinc-500">Pending Samples</span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Pending Samples</span>
                 <span className="p-2 rounded-xl bg-zinc-50 text-zinc-700 border border-zinc-100">
                   <Send className="w-4 h-4 text-zinc-700" />
                 </span>
               </div>
               <div className="mt-4">
-                <div className="text-3xl font-semibold text-zinc-900 tracking-tight">
+                <div className="text-3xl lg:text-[36px] font-bold text-zinc-900 tracking-tight font-sans">
                   19 Boxes
                 </div>
                 <div className="flex items-center gap-2 mt-2">
@@ -342,20 +535,20 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                     <ShieldCheck className="w-3 h-3 mr-0.5" />
                     85%
                   </span>
-                  <span className="text-xs text-zinc-400 font-normal">dispatched today</span>
+                  <span className="text-xs text-zinc-500 font-medium">dispatched today</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* ACTIVE BOQ PIPELINE TABLE CONTAINER */}
-          <div className="rounded-2xl border border-zinc-100 bg-white overflow-hidden shadow-sm">
+          <div className="rounded-2xl border border-zinc-200/80 bg-white overflow-hidden shadow-sm">
             <div className="p-5 lg:p-6 border-b border-zinc-100 flex flex-wrap items-center justify-between gap-4">
               <div>
                 <span className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-800">
                   Live Quotations
                 </span>
-                <h3 className="font-serif text-xl font-normal text-zinc-900 tracking-tight mt-0.5">
+                <h3 className="font-serif text-2xl font-medium text-zinc-900 tracking-tight mt-0.5">
                   Active BOQ Pipeline
                 </h3>
               </div>
@@ -364,7 +557,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                 <select
                   value={pipelineFilter}
                   onChange={(e) => setPipelineFilter(e.target.value)}
-                  className="text-xs border border-zinc-200 rounded-xl px-3 py-1.5 bg-zinc-50 text-zinc-700 focus:outline-none"
+                  className="text-xs font-medium border border-zinc-200 rounded-xl px-3 py-1.5 bg-zinc-50 text-zinc-700 focus:outline-none"
                 >
                   <option>All</option>
                   <option>Negotiation</option>
@@ -375,7 +568,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
 
                 <button
                   onClick={onOpenNewQuoteModal}
-                  className="text-xs font-medium text-amber-800 hover:text-amber-900 flex items-center gap-1 transition-colors"
+                  className="text-xs font-semibold text-amber-800 hover:text-amber-900 flex items-center gap-1 transition-colors"
                 >
                   <span>New Proposal</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -385,7 +578,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-zinc-50/80 text-xs font-semibold uppercase tracking-wider text-zinc-400 py-3.5 px-6 border-b border-zinc-100">
+                <thead className="bg-zinc-50/90 text-xs font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-6 border-b border-zinc-100">
                   <tr>
                     <th className="py-3.5 px-6 w-12">#</th>
                     <th className="py-3.5 px-6">Project Name</th>
@@ -402,11 +595,11 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                       <td className="py-4 px-6 text-zinc-400 font-mono text-xs">
                         {project.number}
                       </td>
-                      <td className="py-4 px-6 font-medium text-zinc-900">
+                      <td className="py-4 px-6 font-semibold text-zinc-900 text-sm">
                         {project.projectName}
                       </td>
-                      <td className="py-4 px-6 text-zinc-500">{project.location}</td>
-                      <td className="py-4 px-6 text-right font-semibold text-zinc-900">
+                      <td className="py-4 px-6 text-zinc-600 text-sm">{project.location}</td>
+                      <td className="py-4 px-6 text-right font-bold text-zinc-900 text-sm font-mono">
                         {project.formattedValue}
                       </td>
                       <td className="py-4 px-6 text-center">
@@ -418,7 +611,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                           {project.stage}
                         </span>
                       </td>
-                      <td className="py-4 px-6 text-zinc-400 text-xs">
+                      <td className="py-4 px-6 text-zinc-500 text-xs">
                         {project.lastUpdate}
                       </td>
                       <td className="py-4 px-6 text-center text-zinc-400 hover:text-zinc-700 cursor-pointer">
@@ -434,19 +627,19 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
           {/* 2-COLUMN SECTION: SAMPLE QUEUE & DEPLETION/SHIPMENTS */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* SAMPLE DISPATCH QUEUE TABLE (8 COLS) */}
-            <div className="lg:col-span-8 rounded-2xl border border-zinc-100 bg-white overflow-hidden shadow-sm">
+            <div className="lg:col-span-8 rounded-2xl border border-zinc-200/80 bg-white overflow-hidden shadow-sm">
               <div className="p-5 lg:p-6 border-b border-zinc-100 flex items-center justify-between">
                 <div>
                   <span className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-800">
                     Architect Logistics
                   </span>
-                  <h3 className="font-serif text-xl font-normal text-zinc-900 tracking-tight mt-0.5">
+                  <h3 className="font-serif text-2xl font-medium text-zinc-900 tracking-tight mt-0.5">
                     Sample Dispatch Queue
                   </h3>
                 </div>
                 <button
                   onClick={onOpenSampleModal}
-                  className="text-xs font-medium text-amber-800 hover:text-amber-900 flex items-center gap-1 transition-colors"
+                  className="text-xs font-semibold text-amber-800 hover:text-amber-900 flex items-center gap-1 transition-colors"
                 >
                   <span>Dispatch New Sample</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -455,7 +648,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-zinc-50/80 text-xs font-semibold uppercase tracking-wider text-zinc-400 py-3.5 px-6 border-b border-zinc-100">
+                  <thead className="bg-zinc-50/90 text-xs font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-6 border-b border-zinc-100">
                     <tr>
                       <th className="py-3.5 px-6 w-12">#</th>
                       <th className="py-3.5 px-6">Product / Sample Set</th>
@@ -471,11 +664,11 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                         <td className="py-4 px-6 text-zinc-400 font-mono text-xs">
                           {item.number}
                         </td>
-                        <td className="py-4 px-6 font-medium text-zinc-900">
+                        <td className="py-4 px-6 font-semibold text-zinc-900 text-sm">
                           {item.productSampleSet}
                         </td>
-                        <td className="py-4 px-6 text-zinc-600">{item.requestedBy}</td>
-                        <td className="py-4 px-6 text-zinc-500">{item.project}</td>
+                        <td className="py-4 px-6 text-zinc-700 font-medium text-sm">{item.requestedBy}</td>
+                        <td className="py-4 px-6 text-zinc-500 text-sm">{item.project}</td>
                         <td className="py-4 px-6 text-center">
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getSampleStatusBadge(
@@ -496,14 +689,14 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
             </div>
 
             {/* STOCK & DEPLETION FEEDS (4 COLS) */}
-            <div className="lg:col-span-4 rounded-2xl border border-zinc-100 bg-white p-6 shadow-sm flex flex-col justify-between">
+            <div className="lg:col-span-4 rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-sm flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between pb-4 border-b border-zinc-100 mb-4">
                   <div>
                     <span className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-800">
                       Depletion Alert
                     </span>
-                    <h3 className="font-serif text-xl font-normal text-zinc-900 tracking-tight mt-0.5">
+                    <h3 className="font-serif text-2xl font-medium text-zinc-900 tracking-tight mt-0.5">
                       Low Stock Feeds
                     </h3>
                   </div>
@@ -516,7 +709,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                     return (
                       <div
                         key={item.id}
-                        className="p-3 rounded-xl border border-zinc-100 hover:border-zinc-200 transition-colors bg-zinc-50/40 space-y-2"
+                        className="p-3 rounded-xl border border-zinc-100 hover:border-zinc-200 transition-colors bg-zinc-50/50 space-y-2"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
@@ -526,11 +719,11 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                               className="w-10 h-10 rounded-lg object-cover border border-zinc-200"
                             />
                             <div>
-                              <h4 className="text-xs font-medium text-zinc-900 line-clamp-1">{item.name}</h4>
-                              <p className="text-[11px] text-zinc-400">{item.specs}</p>
+                              <h4 className="text-xs font-semibold text-zinc-900 line-clamp-1">{item.name}</h4>
+                              <p className="text-[11px] text-zinc-500">{item.specs}</p>
                             </div>
                           </div>
-                          <span className="bg-amber-50 text-amber-800 text-xs font-medium px-2 py-0.5 rounded">
+                          <span className="bg-amber-50 text-amber-800 text-xs font-semibold px-2 py-0.5 rounded">
                             Low Stock
                           </span>
                         </div>
@@ -539,7 +732,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                         <div className="space-y-1 pt-1">
                           <div className="flex items-center justify-between text-[11px] text-zinc-500 font-medium">
                             <span>Remaining</span>
-                            <span className="font-semibold text-zinc-800">
+                            <span className="font-bold text-zinc-800">
                               {item.remaining} {item.unit}
                             </span>
                           </div>
@@ -585,13 +778,13 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
           </div>
 
           {/* MONTHLY REVENUE COMPOSED CHART */}
-          <div className="rounded-2xl border border-zinc-100 bg-white p-6 shadow-sm">
+          <div className="rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-sm">
             <div className="flex flex-wrap items-center justify-between pb-4 border-b border-zinc-100 mb-6 gap-4">
               <div>
                 <span className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-800">
                   Analytics & Trends
                 </span>
-                <h3 className="font-serif text-xl font-normal text-zinc-900 tracking-tight mt-0.5">
+                <h3 className="font-serif text-2xl font-medium text-zinc-900 tracking-tight mt-0.5">
                   Monthly Specification & Sales Volume
                 </h3>
               </div>
@@ -634,19 +827,19 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
           </div>
         </main>
 
-        {/* Dashboard Footer (Clean without tagline) */}
-        <footer className="bg-white border-t border-zinc-100 px-6 lg:px-10 py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-400 gap-3">
+        {/* Dashboard Footer */}
+        <footer className="bg-white border-t border-zinc-200/80 px-6 lg:px-10 py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-zinc-700">SALEEM TRADERS</span>
+            <span className="font-semibold text-zinc-800">SALEEM TRADERS</span>
             <span>• Enterprise Architecture & BOQ Portal</span>
           </div>
 
           <div className="flex items-center space-x-4">
-            <a href="#" className="hover:text-zinc-700 transition-colors">System Security</a>
+            <a href="#" className="hover:text-zinc-800 transition-colors">System Security</a>
             <span>•</span>
-            <a href="#" className="hover:text-zinc-700 transition-colors">Showroom Directory</a>
+            <a href="#" className="hover:text-zinc-800 transition-colors">Showroom Directory</a>
             <span>•</span>
-            <a href="tel:+9242111725336" className="text-amber-800 hover:underline">+92 (42) 111-SALEEM</a>
+            <a href="tel:+9242111725336" className="text-amber-800 font-medium hover:underline">+92 (42) 111-SALEEM</a>
           </div>
         </footer>
       </div>

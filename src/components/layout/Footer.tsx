@@ -96,6 +96,17 @@ export const Footer: React.FC<FooterProps> = ({ setActiveView, onOpenQuote }) =>
               <li>
                 <a href="#contact" className="hover:text-white transition-colors">Contact Us</a>
               </li>
+              <li className="pt-1">
+                <button
+                  onClick={() => {
+                    setActiveView('dashboard');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="text-stone-500 hover:text-[#A38A6B] transition-colors text-[11px] uppercase tracking-wider"
+                >
+                  Staff Portal
+                </button>
+              </li>
             </ul>
           </div>
 

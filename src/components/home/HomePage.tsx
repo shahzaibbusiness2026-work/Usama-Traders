@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowRight,
-  BookOpen,
   Phone,
-  ShieldCheck,
   Truck,
   Award,
-  Users,
-  MapPin,
   ChevronLeft,
   ChevronRight,
   Check,
   Play,
   Pause,
+  Layers,
+  UserCheck,
+  X,
 } from 'lucide-react';
 import { ActiveView, Product } from '../../types';
 import { ArchitecturalProductCard } from '../common/ArchitecturalProductCard';
+import heroLuxuryBath from '../../assets/images/hero_luxury_bath_1790169676815.jpg';
+import heroLuxuryKitchen from '../../assets/images/hero_luxury_kitchen_1790169696762.jpg';
 
 interface HomePageProps {
   setActiveView: (view: ActiveView) => void;
@@ -43,35 +44,36 @@ export const HomePage: React.FC<HomePageProps> = ({
   onToggleCompare,
   onOpenComparisonModal,
 }) => {
-  // Hero Carousel Slides with High-Resolution Imagery and Architectural Badges
+  // Hero Carousel Slides with High-Resolution Imagery matching reference design
   const heroSlides = [
     {
-      pill: 'MORE THAN SPACES • A BETTER TOMORROW',
-      title: 'Bathrooms That Inspire',
-      desc: 'Explore our curated sanitaryware & wellness collections',
-      image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=85',
-      category: 'Sanitaryware',
+      eyebrow: 'PREMIUM SANITARYWARE, TILES, KITCHENS & MORE',
+      title1: 'Elevate',
+      title2: 'Everyday Living',
+      desc: 'Beautiful spaces for a better tomorrow. Discover premium sanitaryware, tiles, and kitchen solutions for modern living.',
+      image: heroLuxuryBath,
     },
     {
-      pill: 'PREMIUM QUARRY SELECTIONS • ITALY & SPAIN',
-      title: 'Architectural Slabs & Stone',
-      desc: 'Discover bookmatched marble and calibrated porcelain slabs',
-      image: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85',
-      category: 'Tiles & Slabs',
+      eyebrow: 'ARCHITECTURAL SLABS & STONE • ITALY & SPAIN',
+      title1: 'Crafted',
+      title2: 'Modern Living',
+      desc: 'Calacatta porcelain surfaces and sculpted marble islands tailored for refined residential spaces.',
+      image: heroLuxuryKitchen,
     },
     {
-      pill: 'MODERN LIVING • CRAFTED WITH DISTINCTION',
-      title: 'Kitchen & Brassware Suites',
-      desc: 'Precision undermount sinks and brushed gold mixer taps',
-      image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=1200&q=85',
-      category: 'Sinks & Taps',
+      eyebrow: 'WELLNESS & CONCEALED WATER SYSTEMS',
+      title1: 'Sanctuary',
+      title2: 'Of Calm & Serenity',
+      desc: 'Immersive rain systems, thermostatic fixtures, and precision brassware designed for daily rejuvenation.',
+      image: 'https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=2000&q=85',
     },
   ];
 
   const [heroSlide, setHeroSlide] = useState(0);
   const [isHeroHovered, setIsHeroHovered] = useState(false);
+  const [isVideoStoryOpen, setIsVideoStoryOpen] = useState(false);
 
-  // Hero slideshow auto-advance with restart & pause on hover
+  // Hero slideshow auto-advance with pause on hover
   useEffect(() => {
     if (isHeroHovered) return;
     const timer = setTimeout(() => {
@@ -328,164 +330,409 @@ export const HomePage: React.FC<HomePageProps> = ({
     setArrivalSlideIndex((prev) => (prev >= maxArrivalIndex ? 0 : prev + 1));
   };
 
-  const brandLogos = [
-    'Roca',
-    'KOHLER',
-    'GROHE',
-    'TOTO',
-    'RAK CERAMICS',
-    'atlas concorde',
-    'FLORIM',
-    'hansgrohe',
-    'caesarstone',
+  const partnerBrands = [
+    {
+      name: 'Roca',
+      origin: 'Spain',
+      badge: (
+        <span className="font-sans font-black text-2xl tracking-tighter text-stone-900">
+          Roca
+        </span>
+      ),
+    },
+    {
+      name: 'GROHE',
+      origin: 'Germany',
+      badge: (
+        <div className="flex flex-col items-center">
+          <svg className="w-5 h-1.5 text-sky-600 mb-0.5" viewBox="0 0 24 8" fill="currentColor">
+            <path d="M0 4 C 4 1, 8 7, 12 4 C 16 1, 20 7, 24 4 L 24 6 C 20 9, 16 3, 12 6 C 8 9, 4 3, 0 6 Z" />
+          </svg>
+          <span className="font-sans font-black tracking-widest text-lg text-stone-900 leading-none">
+            GROHE
+          </span>
+        </div>
+      ),
+    },
+    {
+      name: 'CERA',
+      origin: 'Italy / India',
+      badge: (
+        <div className="flex items-center gap-0.5 font-sans font-black text-xl tracking-wider text-stone-900">
+          <span>CERA</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-red-600 inline-block mb-2" />
+        </div>
+      ),
+    },
+    {
+      name: 'TOTO',
+      origin: 'Japan',
+      badge: (
+        <span className="font-sans font-black tracking-[0.22em] text-xl text-stone-900">
+          TOTO
+        </span>
+      ),
+    },
+    {
+      name: 'Jaquar',
+      origin: 'Global',
+      badge: (
+        <span className="font-serif italic font-bold text-2xl tracking-normal text-stone-900">
+          Jaquar
+        </span>
+      ),
+    },
+    {
+      name: 'hindware',
+      origin: 'Italy Design',
+      badge: (
+        <div className="flex flex-col items-center">
+          <span className="font-sans font-extrabold text-xl tracking-tight text-stone-900 lowercase leading-none">
+            hindware
+          </span>
+          <span className="text-[8px] tracking-[0.2em] uppercase text-stone-500 font-semibold mt-0.5">
+            Italian Collection
+          </span>
+        </div>
+      ),
+    },
+    {
+      name: 'Kajaria',
+      origin: 'India',
+      badge: (
+        <span className="font-sans italic font-black text-xl tracking-tight text-stone-900">
+          Kajaria
+        </span>
+      ),
+    },
+    {
+      name: 'Somany',
+      origin: 'Global',
+      badge: (
+        <span className="font-sans font-bold tracking-[0.16em] text-lg text-stone-900 uppercase">
+          SOMANY
+        </span>
+      ),
+    },
+    {
+      name: 'Kohler',
+      origin: 'USA',
+      badge: (
+        <span className="font-serif font-bold tracking-wider text-xl text-stone-900 uppercase">
+          KOHLER
+        </span>
+      ),
+    },
+    {
+      name: 'RAK Ceramics',
+      origin: 'UAE',
+      badge: (
+        <div className="flex flex-col items-center">
+          <span className="font-sans font-black text-lg tracking-widest text-stone-900 uppercase">
+            RAK
+          </span>
+          <span className="text-[7.5px] tracking-[0.25em] text-stone-500 uppercase font-semibold">
+            CERAMICS
+          </span>
+        </div>
+      ),
+    },
+    {
+      name: 'Duravit',
+      origin: 'Germany',
+      badge: (
+        <span className="font-sans font-bold tracking-[0.18em] text-lg text-stone-900 uppercase">
+          DURAVIT
+        </span>
+      ),
+    },
+    {
+      name: 'Hansgrohe',
+      origin: 'Germany',
+      badge: (
+        <div className="flex items-center gap-1 font-sans font-bold text-lg text-stone-900 tracking-tight">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0" />
+          <span>hansgrohe</span>
+        </div>
+      ),
+    },
   ];
+
+  const [brandIndex, setBrandIndex] = useState(0);
+  const [isBrandHovered, setIsBrandHovered] = useState(false);
+  const maxBrandIndex = Math.max(0, partnerBrands.length - 4);
+
+  useEffect(() => {
+    if (isBrandHovered) return;
+    const timer = setInterval(() => {
+      setBrandIndex((prev) => (prev >= maxBrandIndex ? 0 : prev + 1));
+    }, 3200);
+    return () => clearInterval(timer);
+  }, [isBrandHovered, maxBrandIndex]);
+
+  const handlePrevBrand = () => {
+    setBrandIndex((prev) => (prev <= 0 ? maxBrandIndex : prev - 1));
+  };
+
+  const handleNextBrand = () => {
+    setBrandIndex((prev) => (prev >= maxBrandIndex ? 0 : prev + 1));
+  };
 
   return (
     <div className="w-full bg-[#fbf9f5] font-sans">
-      {/* 1. HERO SECTION (Split Left/Right matching Image 4) */}
-      <section className="relative w-full overflow-hidden bg-stone-900 border-b border-stone-800">
-        <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[580px] lg:min-h-[640px]">
-          {/* Left Column: Dark Textured Slate with Gold Eyebrow & Metrics */}
-          <div
-            className="lg:col-span-6 bg-[#16181b] text-white p-8 sm:p-12 lg:p-16 flex flex-col justify-between relative border-b lg:border-b-0 lg:border-r border-stone-800"
-            style={{
-              backgroundImage:
-                'radial-gradient(circle at 10% 20%, rgba(35, 39, 45, 0.9) 0%, rgba(20, 22, 25, 0.98) 100%)',
-            }}
-          >
-            <div className="space-y-6 max-w-xl">
-              <div className="inline-block">
-                <span className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-600 font-sans">
-                  TIMELESS MATERIALS. BEAUTIFUL SPACES.
-                </span>
-              </div>
+      {/* 1. HERO SECTION: Full-bleed architectural photographic canvas matching reference design */}
+      <section
+        className="w-full relative overflow-hidden bg-stone-950 text-white min-h-[580px] sm:min-h-[640px] lg:min-h-[720px] flex flex-col justify-between"
+        onMouseEnter={() => setIsHeroHovered(true)}
+        onMouseLeave={() => setIsHeroHovered(false)}
+      >
+        {/* Dynamic Background Image with Smooth Crossfade */}
+        <div className="absolute inset-0 z-0">
+          <img
+            key={heroSlides[heroSlide].image}
+            src={heroSlides[heroSlide].image}
+            alt="Elevate Everyday Living - Saleem Traders"
+            className="w-full h-full object-cover object-center transition-all duration-1000 ease-out scale-101"
+          />
+          {/* Architectural Left-heavy Gradient Mask so typography is crystal clear while bathroom highlights shine */}
+          <div className="absolute inset-0 bg-gradient-to-r from-stone-950/90 via-stone-950/55 to-stone-950/15 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-stone-950/40 pointer-events-none" />
+        </div>
 
-              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-white font-light leading-[1.12] tracking-tight">
-                Elevate Everyday Living
-              </h1>
-
-              <p className="text-zinc-300 text-sm lg:text-base font-normal leading-relaxed max-w-lg">
-                Discover premium tiles, sanitaryware and kitchen solutions crafted for modern architectural lifestyles.
-              </p>
-
-              {/* CTAs */}
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <button
-                  id="hero-explore-btn"
-                  onClick={() => setActiveView('catalog')}
-                  className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-[#7E6348] hover:bg-[#A38A6B] text-white text-xs font-semibold uppercase tracking-[0.16em] rounded transition-all duration-300 shadow-md group"
-                >
-                  <span>EXPLORE COLLECTIONS</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </button>
-
-                <button
-                  id="hero-catalogue-btn"
-                  onClick={() => setActiveView('catalog')}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 border border-stone-600 hover:border-stone-400 bg-transparent text-white text-xs font-medium uppercase tracking-[0.16em] rounded transition-colors"
-                >
-                  <BookOpen className="w-3.5 h-3.5 text-[#A38A6B]" />
-                  <span>VIEW CATALOGUE</span>
-                </button>
-              </div>
+        {/* Hero Main Content */}
+        <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-10 pt-16 sm:pt-24 lg:pt-28 pb-12 flex-1 flex flex-col justify-center">
+          <div className="max-w-2xl space-y-5">
+            {/* Eyebrow */}
+            <div className="inline-flex items-center gap-2">
+              <span className="text-[11px] sm:text-xs uppercase tracking-[0.24em] font-medium text-[#d5b282] font-sans">
+                {heroSlides[heroSlide].eyebrow}
+              </span>
             </div>
 
-            {/* 4 Stat Metrics Row matching Image 4 */}
-            <div className="pt-10 mt-8 border-t border-stone-800 grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div>
-                <div className="font-serif text-2xl sm:text-3xl font-medium text-white tracking-tight">
-                  500+
-                </div>
-                <div className="text-xs text-stone-300 font-normal mt-1">
-                  Premium Products
-                </div>
-              </div>
+            {/* Main Headline */}
+            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl text-white font-light leading-[1.08] tracking-tight">
+              {heroSlides[heroSlide].title1} <br />
+              <span className="font-normal">{heroSlides[heroSlide].title2}</span>
+            </h1>
 
-              <div>
-                <div className="font-serif text-2xl sm:text-3xl font-medium text-white tracking-tight">
-                  50+
-                </div>
-                <div className="text-xs text-stone-300 font-normal mt-1">
-                  Global Brands
-                </div>
-              </div>
+            {/* Description */}
+            <p className="text-zinc-200 text-sm sm:text-base font-normal max-w-lg leading-relaxed pt-1">
+              {heroSlides[heroSlide].desc}
+            </p>
 
-              <div>
-                <div className="font-serif text-2xl sm:text-3xl font-medium text-white tracking-tight">
-                  1000+
-                </div>
-                <div className="text-xs text-stone-300 font-normal mt-1">
-                  Happy Customers
-                </div>
-              </div>
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap items-center gap-3.5 pt-3">
+              <button
+                id="hero-explore-btn"
+                onClick={() => {
+                  setActiveView('catalog');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 bg-[#9D805E] hover:bg-[#b89a74] text-white text-xs font-semibold uppercase tracking-[0.16em] transition-all shadow-lg group cursor-pointer"
+              >
+                <span>EXPLORE COLLECTIONS</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </button>
 
-              <div>
-                <div className="font-serif text-2xl sm:text-3xl font-medium text-white tracking-tight">
-                  2
+              <button
+                onClick={() => setIsVideoStoryOpen(true)}
+                className="inline-flex items-center gap-2.5 px-5 sm:px-6 py-3.5 border border-white/40 hover:border-white bg-black/25 hover:bg-black/40 text-white text-xs font-medium uppercase tracking-[0.16em] backdrop-blur-xs transition-all cursor-pointer"
+              >
+                <div className="w-4 h-4 rounded-full border border-white/70 flex items-center justify-center">
+                  <Play className="w-2.5 h-2.5 fill-white text-white ml-0.5" />
                 </div>
-                <div className="text-xs text-stone-300 font-normal mt-1">
-                  Showrooms
-                </div>
-              </div>
+                <span>WATCH OUR STORY</span>
+              </button>
             </div>
           </div>
+        </div>
 
-          {/* Right Column: High-end Architectural Photography with Dynamic Slideshow */}
-          <div
-            className="lg:col-span-6 relative overflow-hidden group min-h-[380px] lg:min-h-[580px]"
-            onMouseEnter={() => setIsHeroHovered(true)}
-            onMouseLeave={() => setIsHeroHovered(false)}
-          >
-            <img
-              key={heroSlides[heroSlide].image}
-              src={heroSlides[heroSlide].image}
-              alt={heroSlides[heroSlide].title}
-              className="w-full h-full object-cover object-center transition-all duration-700 group-hover:scale-103"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/20 to-stone-950/30 pointer-events-none" />
-
-            {/* Top Text Pill matching Image 4 */}
-            <div className="absolute top-6 left-6 text-white text-xs tracking-[0.2em] font-sans font-medium uppercase bg-stone-900/70 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 transition-opacity duration-300">
-              {heroSlides[heroSlide].pill}
+        {/* Hero Bottom Slider Navigation Bar */}
+        <div className="relative z-10 w-full border-t border-white/10 bg-black/20 backdrop-blur-xs py-4 px-4 sm:px-6 lg:px-10">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            {/* Left: 01 02 03 Slide Numbers with Progress Indicator */}
+            <div className="flex items-center gap-5 sm:gap-7">
+              {heroSlides.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setHeroSlide(idx)}
+                  className="group flex items-center gap-2 cursor-pointer transition-colors"
+                  aria-label={`Jump to slide ${idx + 1}`}
+                >
+                  <span
+                    className={`font-serif text-xs sm:text-sm transition-colors ${
+                      heroSlide === idx
+                        ? 'text-white font-semibold'
+                        : 'text-white/40 group-hover:text-white/80'
+                    }`}
+                  >
+                    0{idx + 1}
+                  </span>
+                  {heroSlide === idx && (
+                    <span className="w-8 sm:w-10 h-[2px] bg-[#d5b282] rounded-full inline-block" />
+                  )}
+                </button>
+              ))}
             </div>
 
-            {/* Bottom Right Callout Box matching Image 4 */}
-            <div className="absolute bottom-6 right-6 left-6 sm:left-auto max-w-sm bg-stone-950/85 backdrop-blur-md p-5 rounded border border-stone-700/60 text-white space-y-2">
-              <h3 className="font-serif text-xl sm:text-2xl font-normal text-white">
-                {heroSlides[heroSlide].title}
-              </h3>
-              <p
-                onClick={() => setActiveView('catalog')}
-                className="text-xs text-[#d5b282] hover:text-white transition-colors cursor-pointer flex items-center gap-1.5 font-medium"
-              >
-                <span>{heroSlides[heroSlide].desc}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </p>
-
-              {/* Dots & Auto-advance Bar */}
-              <div className="flex items-center justify-between pt-2">
-                <div className="flex items-center gap-1.5">
-                  {heroSlides.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setHeroSlide(idx)}
-                      className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                        heroSlide === idx ? 'w-5 bg-[#d5b282]' : 'w-1.5 bg-stone-600 hover:bg-stone-500'
-                      }`}
-                      aria-label={`Jump to hero slide ${idx + 1}`}
-                      title={`Hero slide ${idx + 1}`}
-                    />
-                  ))}
-                </div>
-
-                <span className="text-[10px] text-stone-400 font-sans uppercase tracking-wider">
-                  {isHeroHovered ? 'Paused' : `${heroSlide + 1} / ${heroSlides.length}`}
-                </span>
+            {/* Right: SPACES THAT INSPIRE A BETTER YOU & Arrows */}
+            <div className="flex items-center gap-4 sm:gap-6">
+              <span className="text-[10px] sm:text-xs text-white/80 uppercase tracking-[0.2em] font-sans font-medium hidden sm:inline-block">
+                SPACES THAT INSPIRE A BETTER YOU
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() =>
+                    setHeroSlide((prev) => (prev <= 0 ? heroSlides.length - 1 : prev - 1))
+                  }
+                  className="w-8 h-8 rounded-full border border-white/30 hover:border-white text-white/80 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                  aria-label="Previous slide"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() =>
+                    setHeroSlide((prev) => (prev >= heroSlides.length - 1 ? 0 : prev + 1))
+                  }
+                  className="w-8 h-8 rounded-full border border-white/30 hover:border-white text-white/80 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                  aria-label="Next slide"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* 2. VALUE PROPOSITIONS BAR: 4 Columns Directly Below Hero Matching Reference */}
+      <section className="w-full bg-white border-b border-stone-200 py-6 sm:py-7">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-stone-200">
+            {/* 1. Premium Quality */}
+            <div className="flex items-center gap-3.5 px-2 pt-2 sm:pt-0">
+              <div className="w-11 h-11 rounded-full bg-[#fbf9f5] border border-stone-200 flex items-center justify-center text-[#7E6348] shrink-0">
+                <Award className="w-5 h-5 stroke-[1.8]" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-stone-900 font-sans tracking-tight">
+                  Premium Quality
+                </h4>
+                <p className="text-xs text-stone-500 font-normal mt-0.5">
+                  Trusted global brands
+                </p>
+              </div>
+            </div>
+
+            {/* 2. Wide Product Range */}
+            <div className="flex items-center gap-3.5 px-2 pt-4 sm:pt-0 sm:pl-6">
+              <div className="w-11 h-11 rounded-full bg-[#fbf9f5] border border-stone-200 flex items-center justify-center text-[#7E6348] shrink-0">
+                <Layers className="w-5 h-5 stroke-[1.8]" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-stone-900 font-sans tracking-tight">
+                  Wide Product Range
+                </h4>
+                <p className="text-xs text-stone-500 font-normal mt-0.5">
+                  Everything for your space
+                </p>
+              </div>
+            </div>
+
+            {/* 3. Expert Guidance */}
+            <div className="flex items-center gap-3.5 px-2 pt-4 sm:pt-0 sm:pl-6">
+              <div className="w-11 h-11 rounded-full bg-[#fbf9f5] border border-stone-200 flex items-center justify-center text-[#7E6348] shrink-0">
+                <UserCheck className="w-5 h-5 stroke-[1.8]" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-stone-900 font-sans tracking-tight">
+                  Expert Guidance
+                </h4>
+                <p className="text-xs text-stone-500 font-normal mt-0.5">
+                  Personalized consultation
+                </p>
+              </div>
+            </div>
+
+            {/* 4. Nationwide Support */}
+            <div className="flex items-center gap-3.5 px-2 pt-4 sm:pt-0 sm:pl-6">
+              <div className="w-11 h-11 rounded-full bg-[#fbf9f5] border border-stone-200 flex items-center justify-center text-[#7E6348] shrink-0">
+                <Truck className="w-5 h-5 stroke-[1.8]" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-stone-900 font-sans tracking-tight">
+                  Nationwide Support
+                </h4>
+                <p className="text-xs text-stone-500 font-normal mt-0.5">
+                  Reliable service always
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Brand Video Story Modal */}
+      <AnimatePresence>
+        {isVideoStoryOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-3xl bg-stone-900 border border-stone-700 rounded-2xl overflow-hidden shadow-2xl text-white"
+            >
+              <div className="flex items-center justify-between p-4 sm:p-5 border-b border-stone-800">
+                <div>
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-[#d5b282] font-semibold">
+                    OUR BRAND STORY
+                  </span>
+                  <h3 className="font-serif text-lg sm:text-xl font-normal text-white">
+                    Saleem Traders • Elevate Everyday Living
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setIsVideoStoryOpen(false)}
+                  className="w-8 h-8 rounded-full border border-stone-700 text-stone-400 hover:text-white flex items-center justify-center"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
+                <img
+                  src={heroLuxuryBath}
+                  alt="Saleem Traders Luxury Showcase"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-stone-950/60 flex flex-col items-center justify-center text-center p-6 space-y-4">
+                  <div className="w-16 h-16 rounded-full bg-[#9D805E]/90 flex items-center justify-center shadow-xl">
+                    <Play className="w-7 h-7 text-white fill-white ml-1" />
+                  </div>
+                  <div>
+                    <h4 className="font-serif text-2xl font-light text-white">
+                      Four Decades of Architectural Excellence
+                    </h4>
+                    <p className="text-xs text-stone-300 max-w-md mx-auto mt-1">
+                      From timeless Italian marble to world-class German sanitary engineering, explore how Saleem Traders shapes discerning residential and commercial projects.
+                    </p>
+                  </div>
+                  <div className="pt-2">
+                    <button
+                      onClick={() => {
+                        setIsVideoStoryOpen(false);
+                        setActiveView('catalog');
+                      }}
+                      className="px-5 py-2.5 bg-white text-stone-950 text-xs font-semibold uppercase tracking-wider rounded hover:bg-stone-200"
+                    >
+                      Browse Featured Collections
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* 2. SHOP BY CATEGORY (3 Cards Shown First + Slideshow of All Collections) */}
       <section className="py-14 sm:py-18 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -495,7 +742,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             <div className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-800 font-sans mb-1">
               SHOP BY CATEGORY
             </div>
-            <h2 className="font-serif text-2xl lg:text-4xl font-normal text-zinc-900 tracking-tight">
+            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-medium text-zinc-900 tracking-tight">
               Everything for Beautiful Spaces
             </h2>
             <p className="text-sm lg:text-base text-zinc-600 leading-relaxed font-normal mt-2 max-w-2xl">
@@ -660,59 +907,14 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
-      {/* 3. VALUE PROPOSITION STRIP (5 items matching Image 4) */}
-      <section className="border-y border-stone-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {[
-              {
-                icon: Award,
-                title: '100% Genuine Products',
-                desc: 'Authorized dealer network',
-              },
-              {
-                icon: Truck,
-                title: 'Nationwide Delivery',
-                desc: 'Safe & reliable shipping',
-              },
-              {
-                icon: ShieldCheck,
-                title: 'Official Brand Warranty',
-                desc: 'Complete peace of mind',
-              },
-              {
-                icon: Users,
-                title: 'Expert Consultation',
-                desc: 'Get personalized advice',
-              },
-              {
-                icon: MapPin,
-                title: 'Visit Our Showrooms',
-                desc: 'Lahore & Islamabad',
-              },
-            ].map((item, idx) => (
-              <div key={idx} className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#f7f4ee] border border-[#e5dcce] flex items-center justify-center shrink-0 text-[#7E6348]">
-                  <item.icon className="w-4 h-4 stroke-[2]" />
-                </div>
-                <div>
-                  <h4 className="text-xs sm:text-[13px] font-semibold text-stone-900 font-sans tracking-tight">{item.title}</h4>
-                  <p className="text-xs text-stone-500 font-normal mt-0.5">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 4. NEW ARRIVALS (3 Products Shown First + Architectural Slideshow) */}
+      {/* 3. NEW ARRIVALS (3 Products Shown First + Architectural Slideshow) */}
       <section className="py-14 sm:py-18 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 border-b border-zinc-200/80 pb-5">
           <div>
             <div className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-800 font-sans mb-1">
               NEW ARRIVALS
             </div>
-            <h2 className="font-serif text-2xl lg:text-4xl font-normal text-zinc-900 tracking-tight">
+            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-medium text-zinc-900 tracking-tight">
               Fresh Choices for Modern Spaces
             </h2>
             <p className="text-sm lg:text-base text-zinc-600 leading-relaxed font-normal mt-2 max-w-2xl">
@@ -864,7 +1066,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 FOR HOMES, BUILDERS & BUSINESSES
               </div>
 
-              <h2 className="font-serif text-2xl lg:text-4xl text-zinc-900 font-normal tracking-tight">
+              <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-zinc-900 font-medium tracking-tight">
                 Let's Build Something Exceptional
               </h2>
 
@@ -929,13 +1131,101 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
+      {/* OUR PARTNER BRANDS (Interactive Carousel matching user reference image) */}
+      <section id="partner-brands" className="py-14 sm:py-18 bg-[#fbf9f5] border-b border-stone-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-3 border-b border-stone-200/80 gap-4">
+            <div>
+              <div className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-800 font-sans mb-1">
+                TRUSTED BY THE BEST
+              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl text-stone-900 font-medium tracking-tight">
+                Our Partner Brands
+              </h2>
+              <p className="text-sm text-stone-600 font-normal mt-1.5 max-w-xl">
+                We work with leading global brands to bring you quality, style and reliability.
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                setActiveView('catalog');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="group inline-flex items-center gap-1.5 text-xs font-semibold text-stone-900 hover:text-[#7E6348] uppercase tracking-[0.16em] transition-colors self-start sm:self-end"
+            >
+              <span>View All Brands</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+
+          {/* Carousel Viewport with Arrows */}
+          <div
+            className="relative flex items-center gap-3 sm:gap-4"
+            onMouseEnter={() => setIsBrandHovered(true)}
+            onMouseLeave={() => setIsBrandHovered(false)}
+          >
+            {/* Left Chevron Button */}
+            <button
+              onClick={handlePrevBrand}
+              className="w-10 h-10 rounded-full border border-stone-300 hover:border-stone-900 bg-white hover:bg-stone-50 flex items-center justify-center text-stone-700 hover:text-stone-950 transition-all shadow-xs shrink-0 cursor-pointer"
+              aria-label="Previous partner brands"
+              title="Previous brands"
+            >
+              <ChevronLeft className="w-4.5 h-4.5" />
+            </button>
+
+            {/* Overflow Hidden Track */}
+            <div className="overflow-hidden flex-1 py-2">
+              <div
+                className="flex transition-transform duration-600 ease-in-out gap-4"
+                style={{
+                  transform: `translateX(-${brandIndex * 20}%)`,
+                }}
+              >
+                {partnerBrands.map((brand, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => {
+                      setActiveView('catalog');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="shrink-0 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6"
+                  >
+                    <div className="bg-white border border-stone-200/90 hover:border-[#7E6348] hover:shadow-md rounded-xl p-5 h-24 flex flex-col items-center justify-center text-center transition-all duration-300 cursor-pointer group">
+                      <div className="group-hover:scale-105 transition-transform duration-200">
+                        {brand.badge}
+                      </div>
+                      <span className="text-[10px] text-stone-400 uppercase tracking-widest font-sans mt-1.5 group-hover:text-[#7E6348] transition-colors">
+                        {brand.origin}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Chevron Button */}
+            <button
+              onClick={handleNextBrand}
+              className="w-10 h-10 rounded-full border border-stone-300 hover:border-stone-900 bg-white hover:bg-stone-50 flex items-center justify-center text-stone-700 hover:text-stone-950 transition-all shadow-xs shrink-0 cursor-pointer"
+              aria-label="Next partner brands"
+              title="Next brands"
+            >
+              <ChevronRight className="w-4.5 h-4.5" />
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* 6. SIMPLE & CONVENIENT / How It Works */}
       <section className="py-14 sm:py-18 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-xl mx-auto mb-10">
           <div className="text-xs uppercase tracking-[0.25em] text-amber-800 font-semibold font-sans mb-1">
             SIMPLE & CONVENIENT
           </div>
-          <h2 className="font-serif text-2xl lg:text-4xl text-zinc-900 font-normal tracking-tight">
+          <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-zinc-900 font-medium tracking-tight">
             How It Works
           </h2>
         </div>
@@ -982,62 +1272,40 @@ export const HomePage: React.FC<HomePageProps> = ({
       </section>
 
       {/* 7. TRANSFORM YOUR SPACE TODAY */}
-      <section
-        className="py-14 sm:py-18 bg-stone-950 text-white text-center relative overflow-hidden border-y border-stone-800"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(18, 20, 24, 0.92), rgba(18, 20, 24, 0.95)), url("https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-4">
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-white font-normal tracking-tight">
-            Transform Your Space Today
-          </h2>
-          <p className="text-sm sm:text-base text-stone-300 font-normal max-w-xl mx-auto leading-relaxed">
-            Discover premium materials, expert guidance and unparalleled architectural service.
-          </p>
-          <div className="pt-2">
-            <button
-              onClick={() => setActiveView('catalog')}
-              className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-[#7E6348] hover:bg-[#A38A6B] text-white text-xs font-semibold uppercase tracking-[0.16em] rounded transition-all shadow-md"
-            >
-              <span>EXPLORE OUR COLLECTIONS</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* 8. OUR TRUSTED BRANDS */}
-      <section id="brands" className="py-12 bg-white border-b border-zinc-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8 pb-3 border-b border-zinc-100">
-            <h3 className="text-xs font-semibold uppercase tracking-[0.25em] text-amber-800 font-sans">
-              OUR TRUSTED BRANDS
-            </h3>
-            <button
-              onClick={() => setActiveView('catalog')}
-              className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-700 hover:text-[#7E6348] transition-colors flex items-center gap-1"
-            >
-              <span>VIEW ALL BRANDS</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-4 items-center">
-            {brandLogos.map((brand, idx) => (
-              <div
-                key={idx}
-                onClick={() => setActiveView('catalog')}
-                className="h-12 rounded border border-stone-200/70 hover:border-[#7E6348]/50 bg-stone-50/50 hover:bg-white flex items-center justify-center p-2 text-center transition-all cursor-pointer"
-              >
-                <span className="font-serif text-xs tracking-wider uppercase font-medium text-stone-800">
-                  {brand}
-                </span>
+      <section className="w-full bg-[#fbf9f5] py-8 sm:py-12 lg:py-14 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div
+            className="py-14 sm:py-18 px-6 sm:px-12 text-white text-center relative overflow-hidden rounded-2xl sm:rounded-3xl border border-stone-800 shadow-xl"
+            style={{
+              backgroundImage:
+                'linear-gradient(rgba(18, 20, 24, 0.90), rgba(18, 20, 24, 0.94)), url("https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            <div className="max-w-2xl mx-auto space-y-4">
+              <span className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-500 font-sans">
+                TIMELESS ARCHITECTURAL SPACES
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-white font-medium tracking-tight">
+                Transform Your Space Today
+              </h2>
+              <p className="text-sm sm:text-base text-stone-300 font-normal max-w-xl mx-auto leading-relaxed">
+                Discover premium materials, expert guidance and unparalleled architectural service.
+              </p>
+              <div className="pt-2">
+                <button
+                  onClick={() => {
+                    setActiveView('catalog');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-[#7E6348] hover:bg-[#A38A6B] text-white text-xs font-semibold uppercase tracking-[0.16em] rounded transition-all shadow-md group"
+                >
+                  <span>EXPLORE OUR COLLECTIONS</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </button>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>

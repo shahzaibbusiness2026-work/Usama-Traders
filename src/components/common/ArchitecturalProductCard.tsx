@@ -144,21 +144,21 @@ export const ArchitecturalProductCard: React.FC<ArchitecturalProductCardProps> =
             {product.category || 'PORCELAIN & TILES'}
           </div>
 
-          {/* Product Title in refined Cormorant serif */}
+          {/* Product Title in refined Playfair/Marcellus serif */}
           <h3
             onClick={() => onSelectProduct(product)}
-            className="font-serif text-lg font-normal text-zinc-900 group-hover:text-amber-800 cursor-pointer transition-colors leading-snug line-clamp-1"
+            className="font-serif text-lg font-medium text-zinc-900 group-hover:text-amber-800 cursor-pointer transition-colors leading-snug line-clamp-1"
             title={product.name}
           >
             {product.name}
           </h3>
 
           {/* Technical Specs & Subtext */}
-          <p className="text-xs text-zinc-500 font-normal mt-1 line-clamp-1">
+          <p className="text-xs text-zinc-600 font-normal mt-1 line-clamp-1">
             {product.subtitle || product.material || product.type}
           </p>
 
-          <p className="text-xs text-zinc-500 font-normal mt-0.5 line-clamp-1">
+          <p className="text-xs text-zinc-600 font-normal mt-0.5 line-clamp-1">
             {product.dimensions}
             {product.finish && !product.dimensions?.includes(product.finish)
               ? ` • ${product.finish}`

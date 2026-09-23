@@ -31,26 +31,26 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   };
 
   const titleSizes = {
-    sm: 'text-[16px]',
-    md: 'text-[20px] sm:text-[22px]',
-    lg: 'text-[26px]',
+    sm: 'text-[17px] sm:text-[18px]',
+    md: 'text-[21px] sm:text-[23px]',
+    lg: 'text-[26px] sm:text-[28px]',
   };
 
   const taglineSizes = {
-    sm: 'text-[8px] tracking-[0.24em]',
-    md: 'text-[9px] sm:text-[9.5px] tracking-[0.24em]',
-    lg: 'text-[10.5px] tracking-[0.25em]',
+    sm: 'text-[8.5px] tracking-[0.24em]',
+    md: 'text-[10px] tracking-[0.24em]',
+    lg: 'text-[11px] tracking-[0.25em]',
   };
 
   return (
     <div
       onClick={onClick}
-      className={`flex items-center gap-2.5 select-none group transition-all ${
+      className={`flex items-center gap-3 select-none group transition-all ${
         onClick ? 'cursor-pointer' : ''
       } ${className}`}
     >
       {isDashboard ? (
-        /* Geometric Gold Quatrefoil Emblem for Dashboard (Image 1) */
+        /* Geometric Gold Quatrefoil Emblem for Dashboard */
         <div className="w-8 h-8 shrink-0 flex items-center justify-center text-[#d4af37]">
           <svg viewBox="0 0 36 36" fill="none" className="w-8 h-8">
             <circle cx="14" cy="14" r="7" stroke="#d5b282" strokeWidth="1.7" />
@@ -61,14 +61,14 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           </svg>
         </div>
       ) : (
-        /* Iconic Golden Square "ST" Monogram from Images 2, 3, 4 */
+        /* Iconic Golden Square "ST" Monogram */
         <div
-          className={`${iconSizes[size]} shrink-0 rounded-[3px] bg-stone-900 border border-[#c5a880]/70 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-2xs`}
+          className={`${iconSizes[size]} shrink-0 rounded-[4px] bg-zinc-900 border border-[#c5a880]/70 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-2xs`}
           style={{
-            background: 'linear-gradient(145deg, #1c1917 0%, #292524 100%)',
+            background: 'linear-gradient(145deg, #18181b 0%, #27272a 100%)',
           }}
         >
-          <span className="font-editorial text-[#d5b282] font-semibold text-xs sm:text-sm tracking-tight select-none">
+          <span className="font-serif text-[#d5b282] font-semibold text-xs sm:text-sm tracking-tight select-none">
             ST
           </span>
         </div>
@@ -77,10 +77,10 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       {/* Brand Wordmark */}
       <div className="flex flex-col justify-center">
         <span
-          className={`font-editorial ${titleSizes[size]} font-normal leading-none tracking-tight transition-colors ${
+          className={`font-serif ${titleSizes[size]} font-medium leading-none tracking-tight transition-colors ${
             isLight
-              ? 'text-white group-hover:text-[#d5b282]'
-              : 'text-stone-900 group-hover:text-[#886d4b]'
+              ? 'text-white group-hover:text-amber-400'
+              : 'text-zinc-900 group-hover:text-amber-800'
           }`}
         >
           Saleem Traders
