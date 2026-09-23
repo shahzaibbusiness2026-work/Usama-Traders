@@ -15,13 +15,31 @@ import { PRESET_REPORTS } from '../../../data/dashboardMockData';
 
 interface ReportsTabProps {
   showToast: (msg: string) => void;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
+  onNavigateTab?: (tab: string) => void;
 }
 
-export const ReportsTab: React.FC<ReportsTabProps> = ({ showToast }) => {
+export const ReportsTab: React.FC<ReportsTabProps> = ({
+  showToast,
+  searchQuery,
+  onSearchChange,
+  onNavigateTab,
+}) => {
   const [selectedReportId, setSelectedReportId] = useState(PRESET_REPORTS[0].id);
   const [selectedPeriod, setSelectedPeriod] = useState('Current Month (November 2024)');
   const [selectedFormat, setSelectedFormat] = useState('PDF & Excel');
   const [isGenerating, setIsGenerating] = useState(false);
+
+  const filteredPresetReports = PRESET_REPORTS.filter((rep) => {
+    if (!searchQuery?.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      rep.title.toLowerCase().includes(q) ||
+      rep.code.toLowerCase().includes(q) ||
+      rep.description.toLowerCase().includes(q)
+    );
+  });
 
   const handleGenerateCustom = () => {
     setIsGenerating(true);
@@ -108,12 +126,17 @@ export const ReportsTab: React.FC<ReportsTabProps> = ({ showToast }) => {
       </div>
 
       {/* Preset Report Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {PRESET_REPORTS.map((rep) => (
-          <div
-            key={rep.id}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4"
-          >
+      {filteredPresetReports.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-zinc-200/80 p-8 text-center text-zinc-500">
+          No audit reports found matching "{searchQuery}".
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredPresetReports.map((rep) => (
+            <div
+              key={rep.id}
+              className="bg-white rounded-2xl border border-zinc-200/80 p-5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4"
+            >
             <div>
               <div className="flex items-center justify-between text-xs text-zinc-400 font-mono mb-2">
                 <span className="font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">
@@ -155,6 +178,7 @@ export const ReportsTab: React.FC<ReportsTabProps> = ({ showToast }) => {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 };

@@ -498,9 +498,18 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                 placeholder={`Search ${activeTab.toLowerCase()}...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs placeholder-zinc-400 focus:outline-none focus:border-amber-800 focus:bg-white transition-colors"
+                className="w-full pl-9 pr-8 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs placeholder-zinc-400 focus:outline-none focus:border-amber-800 focus:bg-white transition-colors"
               />
               <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-2.5" />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-2.5 text-zinc-400 hover:text-zinc-700 p-0.5"
+                  title="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           </div>
 
@@ -601,6 +610,41 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
             </div>
           </div>
 
+          {/* HORIZONTAL DASHBOARD NAVIGATION TAB BAR */}
+          <div className="bg-white rounded-2xl border border-zinc-200/90 p-1.5 sm:p-2 shadow-xs">
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5 px-0.5">
+              {sidebarNavItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.label;
+                return (
+                  <button
+                    key={item.label}
+                    onClick={() => setActiveTab(item.label)}
+                    className={`flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all cursor-pointer shrink-0 ${
+                      isActive
+                        ? 'bg-amber-800 text-white shadow-xs font-semibold'
+                        : 'text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100/90'
+                    }`}
+                  >
+                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-amber-200' : 'text-zinc-500'}`} />
+                    <span>{item.label}</span>
+                    {item.badge && (
+                      <span
+                        className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-0.5 ${
+                          isActive
+                            ? 'bg-amber-950/40 text-amber-100 ring-1 ring-amber-400/30'
+                            : 'bg-zinc-200 text-zinc-700'
+                        }`}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* DYNAMIC TAB CONTENT */}
           {activeTab === 'Overview Dashboard' && (
             <OverviewTab
@@ -620,6 +664,9 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               inventory={inventoryList}
               onUpdateStock={handleUpdateStock}
               showToast={showToast}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onNavigateTab={(tab) => setActiveTab(tab)}
             />
           )}
 
@@ -629,6 +676,9 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               onUpdateStage={handleUpdateBOQStage}
               onOpenNewQuoteModal={onOpenNewQuoteModal}
               showToast={showToast}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onNavigateTab={(tab) => setActiveTab(tab)}
             />
           )}
 
@@ -637,6 +687,9 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               orders={ordersList}
               onUpdateDeliveryStatus={handleUpdateDeliveryStatus}
               showToast={showToast}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onNavigateTab={(tab) => setActiveTab(tab)}
             />
           )}
 
@@ -646,6 +699,9 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               onUpdateSampleStatus={handleUpdateSampleStatus}
               onOpenSampleModal={onOpenSampleModal}
               showToast={showToast}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onNavigateTab={(tab) => setActiveTab(tab)}
             />
           )}
 
@@ -654,26 +710,45 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               architects={architectsList}
               onLogMeeting={handleLogMeeting}
               showToast={showToast}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onNavigateTab={(tab) => setActiveTab(tab)}
             />
           )}
 
           {activeTab === 'Analytics & Margin' && (
-            <AnalyticsTab showToast={showToast} />
+            <AnalyticsTab
+              showToast={showToast}
+              searchQuery={searchQuery}
+              onNavigateTab={(tab) => setActiveTab(tab)}
+            />
           )}
 
           {activeTab === 'Product Catalogue' && (
             <CatalogTab
               onSelectProduct={onSelectProduct}
               showToast={showToast}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onNavigateTab={(tab) => setActiveTab(tab)}
             />
           )}
 
           {activeTab === 'Reports' && (
-            <ReportsTab showToast={showToast} />
+            <ReportsTab
+              showToast={showToast}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onNavigateTab={(tab) => setActiveTab(tab)}
+            />
           )}
 
           {activeTab === 'Settings' && (
-            <SettingsTab showToast={showToast} />
+            <SettingsTab
+              showToast={showToast}
+              searchQuery={searchQuery}
+              onNavigateTab={(tab) => setActiveTab(tab)}
+            />
           )}
         </main>
 

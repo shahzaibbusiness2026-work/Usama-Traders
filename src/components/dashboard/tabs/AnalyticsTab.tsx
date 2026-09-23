@@ -27,12 +27,23 @@ import {
 
 interface AnalyticsTabProps {
   showToast: (msg: string) => void;
+  searchQuery?: string;
+  onNavigateTab?: (tab: string) => void;
 }
 
-export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ showToast }) => {
+export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
+  showToast,
+  searchQuery,
+  onNavigateTab,
+}) => {
   const handleExportAnalytics = () => {
     showToast('Exporting Q4 Financial & Category Margin Analytics (Excel / CSV)...');
   };
+
+  const filteredBrands = BRAND_PERFORMANCE_DATA.filter((b) => {
+    if (!searchQuery?.trim()) return true;
+    return b.brand.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -223,7 +234,7 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({ showToast }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100 text-zinc-800">
-              {BRAND_PERFORMANCE_DATA.map((brand) => (
+              {filteredBrands.map((brand) => (
                 <tr key={brand.brand} className="hover:bg-zinc-50/60 transition-colors">
                   <td className="py-4 px-6 font-bold text-zinc-900 text-sm">{brand.brand}</td>
                   <td className="py-4 px-6 text-right font-mono font-bold text-sm text-zinc-900">

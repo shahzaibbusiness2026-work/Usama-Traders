@@ -18,6 +18,9 @@ interface SampleRequestsTabProps {
   onUpdateSampleStatus: (id: string, newStatus: SampleDispatchItem['status']) => void;
   onOpenSampleModal: () => void;
   showToast: (msg: string) => void;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
+  onNavigateTab?: (tab: string) => void;
 }
 
 export const SampleRequestsTab: React.FC<SampleRequestsTabProps> = ({
@@ -25,22 +28,32 @@ export const SampleRequestsTab: React.FC<SampleRequestsTabProps> = ({
   onUpdateSampleStatus,
   onOpenSampleModal,
   showToast,
+  searchQuery: externalSearchQuery,
+  onSearchChange,
+  onNavigateTab,
 }) => {
   const [selectedStatus, setSelectedStatus] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [internalSearchQuery, setInternalSearchQuery] = useState('');
   const [activeTrackingSample, setActiveTrackingSample] = useState<SampleDispatchItem | null>(null);
+
+  const currentSearch = externalSearchQuery !== undefined ? externalSearchQuery : internalSearchQuery;
+  const handleSearchChange = (val: string) => {
+    setInternalSearchQuery(val);
+    onSearchChange?.(val);
+  };
 
   const statuses = ['All', 'Ready', 'Packed', 'In Transit', 'Preparing'];
 
   const filteredSamples = samples.filter((s) => {
     if (selectedStatus !== 'All' && s.status !== selectedStatus) return false;
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
+    if (currentSearch.trim()) {
+      const q = currentSearch.toLowerCase();
       return (
         s.productSampleSet.toLowerCase().includes(q) ||
         s.requestedBy.toLowerCase().includes(q) ||
         s.project.toLowerCase().includes(q) ||
-        s.number.toLowerCase().includes(q)
+        s.number.toLowerCase().includes(q) ||
+        s.status.toLowerCase().includes(q)
       );
     }
     return true;
@@ -148,11 +161,20 @@ export const SampleRequestsTab: React.FC<SampleRequestsTabProps> = ({
             <input
               type="text"
               placeholder="Search by architect, kit or project..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs placeholder-zinc-400 focus:outline-none focus:border-amber-800 focus:bg-white"
+              value={currentSearch}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="w-full pl-9 pr-8 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs placeholder-zinc-400 focus:outline-none focus:border-amber-800 focus:bg-white"
             />
             <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-2.5" />
+            {currentSearch && (
+              <button
+                onClick={() => handleSearchChange('')}
+                className="absolute right-2.5 top-2.5 text-zinc-400 hover:text-zinc-600 p-0.5"
+                title="Clear search"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -18,28 +18,41 @@ interface OrdersTabProps {
   orders: CommercialOrder[];
   onUpdateDeliveryStatus: (orderId: string, newStatus: CommercialOrder['deliveryStatus']) => void;
   showToast: (msg: string) => void;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
+  onNavigateTab?: (tab: string) => void;
 }
 
 export const OrdersTab: React.FC<OrdersTabProps> = ({
   orders,
   onUpdateDeliveryStatus,
   showToast,
+  searchQuery: externalSearchQuery,
+  onSearchChange,
+  onNavigateTab,
 }) => {
   const [selectedStatus, setSelectedStatus] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [internalSearchQuery, setInternalSearchQuery] = useState('');
   const [activeOrderModal, setActiveOrderModal] = useState<CommercialOrder | null>(null);
+
+  const currentSearch = externalSearchQuery !== undefined ? externalSearchQuery : internalSearchQuery;
+  const handleSearchChange = (val: string) => {
+    setInternalSearchQuery(val);
+    onSearchChange?.(val);
+  };
 
   const statuses = ['All', 'Processing', 'Dispatched', 'In Transit', 'Delivered', 'On Hold'];
 
   const filteredOrders = orders.filter((o) => {
     if (selectedStatus !== 'All' && o.deliveryStatus !== selectedStatus) return false;
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
+    if (currentSearch.trim()) {
+      const q = currentSearch.toLowerCase();
       return (
         o.orderNumber.toLowerCase().includes(q) ||
         o.customerName.toLowerCase().includes(q) ||
         o.companyOrFirm.toLowerCase().includes(q) ||
-        o.projectSite.toLowerCase().includes(q)
+        o.projectSite.toLowerCase().includes(q) ||
+        o.deliveryStatus.toLowerCase().includes(q)
       );
     }
     return true;
@@ -159,11 +172,20 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
             <input
               type="text"
               placeholder="Search by order ID, customer or site..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs placeholder-zinc-400 focus:outline-none focus:border-amber-800 focus:bg-white"
+              value={currentSearch}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="w-full pl-9 pr-8 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs placeholder-zinc-400 focus:outline-none focus:border-amber-800 focus:bg-white"
             />
             <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-2.5" />
+            {currentSearch && (
+              <button
+                onClick={() => handleSearchChange('')}
+                className="absolute right-2.5 top-2.5 text-zinc-400 hover:text-zinc-600 p-0.5"
+                title="Clear search"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
       </div>

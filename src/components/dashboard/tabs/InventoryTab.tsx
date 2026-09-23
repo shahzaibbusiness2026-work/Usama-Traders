@@ -21,17 +21,29 @@ interface InventoryTabProps {
   inventory: WarehouseInventoryItem[];
   onUpdateStock: (itemId: string, newStock: number, note: string) => void;
   showToast: (msg: string) => void;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
+  onNavigateTab?: (tab: string) => void;
 }
 
 export const InventoryTab: React.FC<InventoryTabProps> = ({
   inventory,
   onUpdateStock,
   showToast,
+  searchQuery: externalSearchQuery,
+  onSearchChange,
+  onNavigateTab,
 }) => {
   const [selectedWarehouse, setSelectedWarehouse] = useState('All Warehouses');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [internalSearchQuery, setInternalSearchQuery] = useState('');
+
+  const currentSearch = externalSearchQuery !== undefined ? externalSearchQuery : internalSearchQuery;
+  const handleSearchChange = (val: string) => {
+    setInternalSearchQuery(val);
+    onSearchChange?.(val);
+  };
 
   // Stock Adjustment Modal State
   const [adjustingItem, setAdjustingItem] = useState<WarehouseInventoryItem | null>(null);
@@ -60,13 +72,14 @@ export const InventoryTab: React.FC<InventoryTabProps> = ({
     if (selectedWarehouse !== 'All Warehouses' && item.warehouse !== selectedWarehouse) return false;
     if (selectedCategory !== 'All' && item.category !== selectedCategory) return false;
     if (selectedStatus !== 'All' && item.status !== selectedStatus) return false;
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
+    if (currentSearch.trim()) {
+      const q = currentSearch.toLowerCase();
       return (
         item.name.toLowerCase().includes(q) ||
         item.sku.toLowerCase().includes(q) ||
         item.brand.toLowerCase().includes(q) ||
-        item.specs.toLowerCase().includes(q)
+        item.specs.toLowerCase().includes(q) ||
+        item.warehouse.toLowerCase().includes(q)
       );
     }
     return true;
@@ -198,11 +211,20 @@ export const InventoryTab: React.FC<InventoryTabProps> = ({
             <input
               type="text"
               placeholder="Search by SKU, product name, brand or dimensions..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs placeholder-zinc-400 focus:outline-none focus:border-amber-800 focus:bg-white"
+              value={currentSearch}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="w-full pl-9 pr-8 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs placeholder-zinc-400 focus:outline-none focus:border-amber-800 focus:bg-white"
             />
             <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-2.5" />
+            {currentSearch && (
+              <button
+                onClick={() => handleSearchChange('')}
+                className="absolute right-2.5 top-2.5 text-zinc-400 hover:text-zinc-600 p-0.5"
+                title="Clear search"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
           <div className="sm:col-span-4">

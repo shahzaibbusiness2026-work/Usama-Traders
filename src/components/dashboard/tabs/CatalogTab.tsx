@@ -17,15 +17,27 @@ import { CATALOG_PRODUCTS, NEW_ARRIVALS } from '../../../data/mockData';
 interface CatalogTabProps {
   onSelectProduct?: (product: Product) => void;
   showToast: (msg: string) => void;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
+  onNavigateTab?: (tab: string) => void;
 }
 
 export const CatalogTab: React.FC<CatalogTabProps> = ({
   onSelectProduct,
   showToast,
+  searchQuery: externalSearchQuery,
+  onSearchChange,
+  onNavigateTab,
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [internalSearchQuery, setInternalSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
+
+  const currentSearch = externalSearchQuery !== undefined ? externalSearchQuery : internalSearchQuery;
+  const handleSearchChange = (val: string) => {
+    setInternalSearchQuery(val);
+    onSearchChange?.(val);
+  };
 
   const combinedProducts: Product[] = [
     ...CATALOG_PRODUCTS,
@@ -48,8 +60,8 @@ export const CatalogTab: React.FC<CatalogTabProps> = ({
   const filteredProducts = combinedProducts.filter((p) => {
     if (selectedCategory !== 'All' && p.category.toLowerCase() !== selectedCategory.toLowerCase())
       return false;
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
+    if (currentSearch.trim()) {
+      const q = currentSearch.toLowerCase();
       return (
         p.name.toLowerCase().includes(q) ||
         p.category.toLowerCase().includes(q) ||
@@ -110,11 +122,20 @@ export const CatalogTab: React.FC<CatalogTabProps> = ({
             <input
               type="text"
               placeholder="Search catalogue by name, material, finish or brand..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs placeholder-zinc-400 focus:outline-none focus:border-amber-800 focus:bg-white"
+              value={currentSearch}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="w-full pl-9 pr-8 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs placeholder-zinc-400 focus:outline-none focus:border-amber-800 focus:bg-white"
             />
             <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-2.5" />
+            {currentSearch && (
+              <button
+                onClick={() => handleSearchChange('')}
+                className="absolute right-2.5 top-2.5 text-zinc-400 hover:text-zinc-600 p-0.5"
+                title="Clear search"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
           <div className="sm:col-span-4">

@@ -12,9 +12,15 @@ import {
 
 interface SettingsTabProps {
   showToast: (msg: string) => void;
+  searchQuery?: string;
+  onNavigateTab?: (tab: string) => void;
 }
 
-export const SettingsTab: React.FC<SettingsTabProps> = ({ showToast }) => {
+export const SettingsTab: React.FC<SettingsTabProps> = ({
+  showToast,
+  searchQuery,
+  onNavigateTab,
+}) => {
   // Form states
   const [legalName, setLegalName] = useState('Saleem Traders & Co. (Pvt) Ltd.');
   const [ntn, setNtn] = useState('0819234-7');
