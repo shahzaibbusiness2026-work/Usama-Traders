@@ -101,3 +101,55 @@ export interface CartItem {
   selectedThickness?: string;
   notes?: string;
 }
+
+export interface CommercialOrder {
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  companyOrFirm: string;
+  projectSite: string;
+  itemsSummary: string;
+  itemCount: number;
+  totalAmount: number;
+  formattedAmount: string;
+  paymentStatus: 'Paid' | '50% Advance' | 'Net 30 Credit' | 'Pending';
+  deliveryStatus: 'Processing' | 'Dispatched' | 'In Transit' | 'Delivered' | 'On Hold';
+  orderDate: string;
+  expectedDelivery: string;
+  carrier: string;
+  trackingNumber: string;
+}
+
+export interface ArchitectPartner {
+  id: string;
+  firmName: string;
+  contactPerson: string;
+  role: string;
+  email: string;
+  phone: string;
+  city: string;
+  tier: 'Platinum Partner' | 'Gold Specifier' | 'Silver Member';
+  activeProjects: number;
+  lifetimeBOQValue: string;
+  specialty: string;
+  lastMeeting: string;
+}
+
+export interface WarehouseInventoryItem {
+  id: string;
+  sku: string;
+  name: string;
+  category: string;
+  brand: string;
+  specs: string;
+  warehouse: string;
+  binLocation: string;
+  availableStock: number;
+  reorderLevel: number;
+  unit: string;
+  costPrice: number;
+  tradePrice: number;
+  status: 'In Stock' | 'Low Stock' | 'Critical' | 'Incoming';
+  image: string;
+}
+

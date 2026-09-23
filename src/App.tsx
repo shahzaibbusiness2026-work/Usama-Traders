@@ -255,6 +255,10 @@ export default function App() {
             >
               <ExecutiveDashboard
                 setActiveView={setActiveView}
+                onSelectProduct={(p) => {
+                  setSelectedProduct(p);
+                  setActiveView('product');
+                }}
                 onOpenNewQuoteModal={() => openQuoteModalFor('Enterprise BOQ')}
                 onOpenSampleModal={() => openSampleModalFor()}
               />
