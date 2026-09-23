@@ -47,6 +47,7 @@ export const Product360Viewer: React.FC<Product360ViewerProps> = ({
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const autoRotateRestartTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Auto-rotation loop
   useEffect(() => {
@@ -57,8 +58,20 @@ export const Product360Viewer: React.FC<Product360ViewerProps> = ({
     return () => clearInterval(interval);
   }, [isAutoRotating, isDragging]);
 
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (autoRotateRestartTimerRef.current) {
+        clearTimeout(autoRotateRestartTimerRef.current);
+      }
+    };
+  }, []);
+
   // Drag handlers for mouse and touch
   const handlePointerDown = (clientX: number) => {
+    if (autoRotateRestartTimerRef.current) {
+      clearTimeout(autoRotateRestartTimerRef.current);
+    }
     setIsDragging(true);
     setIsAutoRotating(false);
     setStartX(clientX);
@@ -78,6 +91,13 @@ export const Product360Viewer: React.FC<Product360ViewerProps> = ({
 
   const handlePointerUp = () => {
     setIsDragging(false);
+    // Restart auto-rotation smoothly after 2.5 seconds of inactivity
+    if (autoRotateRestartTimerRef.current) {
+      clearTimeout(autoRotateRestartTimerRef.current);
+    }
+    autoRotateRestartTimerRef.current = setTimeout(() => {
+      setIsAutoRotating(true);
+    }, 2500);
   };
 
   useEffect(() => {

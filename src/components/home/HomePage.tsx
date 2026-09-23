@@ -43,11 +43,47 @@ export const HomePage: React.FC<HomePageProps> = ({
   onToggleCompare,
   onOpenComparisonModal,
 }) => {
+  // Hero Carousel Slides with High-Resolution Imagery and Architectural Badges
+  const heroSlides = [
+    {
+      pill: 'MORE THAN SPACES • A BETTER TOMORROW',
+      title: 'Bathrooms That Inspire',
+      desc: 'Explore our curated sanitaryware & wellness collections',
+      image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=85',
+      category: 'Sanitaryware',
+    },
+    {
+      pill: 'PREMIUM QUARRY SELECTIONS • ITALY & SPAIN',
+      title: 'Architectural Slabs & Stone',
+      desc: 'Discover bookmatched marble and calibrated porcelain slabs',
+      image: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=85',
+      category: 'Tiles & Slabs',
+    },
+    {
+      pill: 'MODERN LIVING • CRAFTED WITH DISTINCTION',
+      title: 'Kitchen & Brassware Suites',
+      desc: 'Precision undermount sinks and brushed gold mixer taps',
+      image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=1200&q=85',
+      category: 'Sinks & Taps',
+    },
+  ];
+
   const [heroSlide, setHeroSlide] = useState(0);
+  const [isHeroHovered, setIsHeroHovered] = useState(false);
+
+  // Hero slideshow auto-advance with restart & pause on hover
+  useEffect(() => {
+    if (isHeroHovered) return;
+    const timer = setTimeout(() => {
+      setHeroSlide((prev) => (prev >= heroSlides.length - 1 ? 0 : prev + 1));
+    }, 5500);
+    return () => clearTimeout(timer);
+  }, [isHeroHovered, heroSlide, heroSlides.length]);
 
   // Category Slideshow State (Shows 3 cards first, then auto-advances slideshow of all)
   const [catSlideIndex, setCatSlideIndex] = useState(0);
   const [isCatAutoPlay, setIsCatAutoPlay] = useState(true);
+  const [isCatHovered, setIsCatHovered] = useState(false);
   const [visibleCards, setVisibleCards] = useState(3);
 
   // Categories for Beautiful Spaces with counts and high-res imagery
@@ -129,14 +165,15 @@ export const HomePage: React.FC<HomePageProps> = ({
   const maxCatIndex = Math.max(0, categories.length - visibleCards);
   const safeCatIndex = Math.min(catSlideIndex, maxCatIndex);
 
-  // Auto-advancing slideshow (pauses on hover or manual pause)
+  // Auto-advancing slideshow with clean restart and time issue fix:
+  // Restarts countdown every time the slide changes (auto or manual) or hover ends
   useEffect(() => {
-    if (!isCatAutoPlay) return;
-    const timer = setInterval(() => {
+    if (!isCatAutoPlay || isCatHovered) return;
+    const timer = setTimeout(() => {
       setCatSlideIndex((prev) => (prev >= maxCatIndex ? 0 : prev + 1));
     }, 4500);
-    return () => clearInterval(timer);
-  }, [isCatAutoPlay, maxCatIndex]);
+    return () => clearTimeout(timer);
+  }, [isCatAutoPlay, isCatHovered, maxCatIndex, catSlideIndex]);
 
   const handlePrevCategory = () => {
     setCatSlideIndex((prev) => (prev <= 0 ? maxCatIndex : prev - 1));
@@ -268,17 +305,20 @@ export const HomePage: React.FC<HomePageProps> = ({
   // New Arrivals Slideshow State (Shows 3 cards first, then auto-advancing slideshow of all)
   const [arrivalSlideIndex, setArrivalSlideIndex] = useState(0);
   const [isArrivalAutoPlay, setIsArrivalAutoPlay] = useState(true);
+  const [isArrivalHovered, setIsArrivalHovered] = useState(false);
 
   const maxArrivalIndex = Math.max(0, newArrivals.length - visibleCards);
   const safeArrivalIndex = Math.min(arrivalSlideIndex, maxArrivalIndex);
 
+  // Auto-advancing New Arrivals slideshow with clean restart and time issue fix:
+  // Restarts countdown every time the slide changes (auto or manual) or hover ends
   useEffect(() => {
-    if (!isArrivalAutoPlay) return;
-    const timer = setInterval(() => {
+    if (!isArrivalAutoPlay || isArrivalHovered) return;
+    const timer = setTimeout(() => {
       setArrivalSlideIndex((prev) => (prev >= maxArrivalIndex ? 0 : prev + 1));
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [isArrivalAutoPlay, maxArrivalIndex]);
+    }, 4500);
+    return () => clearTimeout(timer);
+  }, [isArrivalAutoPlay, isArrivalHovered, maxArrivalIndex, arrivalSlideIndex]);
 
   const handlePrevArrival = () => {
     setArrivalSlideIndex((prev) => (prev <= 0 ? maxArrivalIndex : prev - 1));
@@ -315,16 +355,16 @@ export const HomePage: React.FC<HomePageProps> = ({
           >
             <div className="space-y-6 max-w-xl">
               <div className="inline-block">
-                <span className="text-xs font-semibold uppercase tracking-[0.22em] text-[#A38A6B] font-sans">
+                <span className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-600 font-sans">
                   TIMELESS MATERIALS. BEAUTIFUL SPACES.
                 </span>
               </div>
 
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-white font-normal leading-[1.12] tracking-tight">
+              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-white font-light leading-[1.12] tracking-tight">
                 Elevate Everyday Living
               </h1>
 
-              <p className="text-stone-300 text-sm sm:text-base font-normal leading-relaxed max-w-lg">
+              <p className="text-zinc-300 text-sm lg:text-base font-normal leading-relaxed max-w-lg">
                 Discover premium tiles, sanitaryware and kitchen solutions crafted for modern architectural lifestyles.
               </p>
 
@@ -390,44 +430,57 @@ export const HomePage: React.FC<HomePageProps> = ({
             </div>
           </div>
 
-          {/* Right Column: High-end Bathroom Photography with Carousel & Badges */}
-          <div className="lg:col-span-6 relative overflow-hidden group min-h-[380px]">
+          {/* Right Column: High-end Architectural Photography with Dynamic Slideshow */}
+          <div
+            className="lg:col-span-6 relative overflow-hidden group min-h-[380px] lg:min-h-[580px]"
+            onMouseEnter={() => setIsHeroHovered(true)}
+            onMouseLeave={() => setIsHeroHovered(false)}
+          >
             <img
-              src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=85"
-              alt="Luxury Bathroom"
-              className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-103"
+              key={heroSlides[heroSlide].image}
+              src={heroSlides[heroSlide].image}
+              alt={heroSlides[heroSlide].title}
+              className="w-full h-full object-cover object-center transition-all duration-700 group-hover:scale-103"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-stone-950/30 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/20 to-stone-950/30 pointer-events-none" />
 
             {/* Top Text Pill matching Image 4 */}
-            <div className="absolute top-6 left-6 text-white text-xs tracking-[0.2em] font-sans font-medium uppercase bg-stone-900/70 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10">
-              MORE THAN SPACES A BETTER TOMORROW
+            <div className="absolute top-6 left-6 text-white text-xs tracking-[0.2em] font-sans font-medium uppercase bg-stone-900/70 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 transition-opacity duration-300">
+              {heroSlides[heroSlide].pill}
             </div>
 
             {/* Bottom Right Callout Box matching Image 4 */}
             <div className="absolute bottom-6 right-6 left-6 sm:left-auto max-w-sm bg-stone-950/85 backdrop-blur-md p-5 rounded border border-stone-700/60 text-white space-y-2">
               <h3 className="font-serif text-xl sm:text-2xl font-normal text-white">
-                Bathrooms That Inspire
+                {heroSlides[heroSlide].title}
               </h3>
               <p
                 onClick={() => setActiveView('catalog')}
                 className="text-xs text-[#d5b282] hover:text-white transition-colors cursor-pointer flex items-center gap-1.5 font-medium"
               >
-                <span>Explore our curated sanitaryware collection</span>
+                <span>{heroSlides[heroSlide].desc}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </p>
 
-              {/* Dots */}
-              <div className="flex items-center gap-1.5 pt-2">
-                {[0, 1, 2].map((idx) => (
-                  <span
-                    key={idx}
-                    onClick={() => setHeroSlide(idx)}
-                    className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                      heroSlide === idx ? 'w-5 bg-[#d5b282]' : 'w-1.5 bg-stone-600'
-                    }`}
-                  />
-                ))}
+              {/* Dots & Auto-advance Bar */}
+              <div className="flex items-center justify-between pt-2">
+                <div className="flex items-center gap-1.5">
+                  {heroSlides.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setHeroSlide(idx)}
+                      className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                        heroSlide === idx ? 'w-5 bg-[#d5b282]' : 'w-1.5 bg-stone-600 hover:bg-stone-500'
+                      }`}
+                      aria-label={`Jump to hero slide ${idx + 1}`}
+                      title={`Hero slide ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+
+                <span className="text-[10px] text-stone-400 font-sans uppercase tracking-wider">
+                  {isHeroHovered ? 'Paused' : `${heroSlide + 1} / ${heroSlides.length}`}
+                </span>
               </div>
             </div>
           </div>
@@ -437,15 +490,15 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* 2. SHOP BY CATEGORY (3 Cards Shown First + Slideshow of All Collections) */}
       <section className="py-14 sm:py-18 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header with Title and Slideshow Controls */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 border-b border-stone-200/80 pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 border-b border-zinc-200/80 pb-5">
           <div>
-            <div className="text-xs uppercase tracking-[0.22em] text-[#7E6348] font-semibold font-sans mb-1">
+            <div className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-800 font-sans mb-1">
               SHOP BY CATEGORY
             </div>
-            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-stone-900 font-normal tracking-tight">
+            <h2 className="font-serif text-2xl lg:text-4xl font-normal text-zinc-900 tracking-tight">
               Everything for Beautiful Spaces
             </h2>
-            <p className="text-sm sm:text-base text-stone-600 font-normal mt-2 max-w-2xl leading-relaxed">
+            <p className="text-sm lg:text-base text-zinc-600 leading-relaxed font-normal mt-2 max-w-2xl">
               Premium tiles, sanitaryware, kitchen solutions and accessories from the world's leading architectural brands.
             </p>
           </div>
@@ -456,6 +509,19 @@ export const HomePage: React.FC<HomePageProps> = ({
             <span className="text-xs font-medium text-stone-500 font-sans hidden md:inline-block mr-1">
               {safeCatIndex + 1}–{Math.min(safeCatIndex + visibleCards, categories.length)} of {categories.length}
             </span>
+
+            {/* Visual Timer Progress Bar */}
+            <div className="hidden sm:flex items-center gap-1.5" title="Auto-advance countdown">
+              <div className="w-14 h-1 bg-stone-200/90 rounded-full overflow-hidden">
+                <motion.div
+                  key={`cat-progress-${safeCatIndex}-${isCatAutoPlay}-${isCatHovered}`}
+                  initial={{ width: '0%' }}
+                  animate={{ width: isCatAutoPlay && !isCatHovered ? '100%' : '0%' }}
+                  transition={{ duration: 4.5, ease: 'linear' }}
+                  className="h-full bg-[#7E6348] rounded-full"
+                />
+              </div>
+            </div>
 
             {/* Play / Pause Toggle */}
             <button
@@ -501,11 +567,11 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* 3-Card Carousel Viewport (Shows 3 cards at once on desktop, transitions smoothly) */}
         <div
           className="relative overflow-hidden -mx-3 py-1"
-          onMouseEnter={() => setIsCatAutoPlay(false)}
-          onMouseLeave={() => setIsCatAutoPlay(true)}
+          onMouseEnter={() => setIsCatHovered(true)}
+          onMouseLeave={() => setIsCatHovered(false)}
         >
           <div
-            className="flex transition-transform duration-600 ease-out"
+            className="flex transition-transform duration-700 ease-in-out"
             style={{
               transform: `translateX(-${safeCatIndex * (100 / visibleCards)}%)`,
             }}
@@ -582,8 +648,14 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
 
           <div className="text-xs text-stone-600 font-normal font-sans flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${isCatAutoPlay ? 'bg-emerald-700 animate-pulse' : 'bg-stone-500'}`} />
-            <span>{isCatAutoPlay ? 'Auto-advancing • Hover to pause' : 'Slideshow paused'}</span>
+            <span className={`w-2 h-2 rounded-full ${isCatAutoPlay ? (isCatHovered ? 'bg-amber-600' : 'bg-emerald-700 animate-pulse') : 'bg-stone-500'}`} />
+            <span>
+              {isCatAutoPlay
+                ? isCatHovered
+                  ? 'Paused on hover'
+                  : 'Auto-advancing (4.5s) • Restarts at end'
+                : 'Slideshow paused'}
+            </span>
           </div>
         </div>
       </section>
@@ -635,15 +707,15 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* 4. NEW ARRIVALS (3 Products Shown First + Architectural Slideshow) */}
       <section className="py-14 sm:py-18 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 border-b border-stone-200/80 pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 border-b border-zinc-200/80 pb-5">
           <div>
-            <div className="text-xs uppercase tracking-[0.22em] text-[#7E6348] font-semibold font-sans mb-1">
+            <div className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-800 font-sans mb-1">
               NEW ARRIVALS
             </div>
-            <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-stone-900 font-normal tracking-tight">
+            <h2 className="font-serif text-2xl lg:text-4xl font-normal text-zinc-900 tracking-tight">
               Fresh Choices for Modern Spaces
             </h2>
-            <p className="text-sm sm:text-base text-stone-600 font-normal mt-2 max-w-2xl leading-relaxed">
+            <p className="text-sm lg:text-base text-zinc-600 leading-relaxed font-normal mt-2 max-w-2xl">
               Recently specified stone slabs, luxury sanitary fixtures, and thermostatic brassware ready for immediate project delivery.
             </p>
           </div>
@@ -654,6 +726,19 @@ export const HomePage: React.FC<HomePageProps> = ({
             <span className="text-xs font-medium text-stone-500 font-sans hidden md:inline-block mr-1">
               {safeArrivalIndex + 1}–{Math.min(safeArrivalIndex + visibleCards, newArrivals.length)} of {newArrivals.length}
             </span>
+
+            {/* Visual Timer Progress Bar */}
+            <div className="hidden sm:flex items-center gap-1.5" title="Auto-advance countdown">
+              <div className="w-14 h-1 bg-stone-200/90 rounded-full overflow-hidden">
+                <motion.div
+                  key={`arrival-progress-${safeArrivalIndex}-${isArrivalAutoPlay}-${isArrivalHovered}`}
+                  initial={{ width: '0%' }}
+                  animate={{ width: isArrivalAutoPlay && !isArrivalHovered ? '100%' : '0%' }}
+                  transition={{ duration: 4.5, ease: 'linear' }}
+                  className="h-full bg-[#7E6348] rounded-full"
+                />
+              </div>
+            </div>
 
             {/* Play/Pause Toggle */}
             <button
@@ -699,11 +784,11 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* 3-Card Carousel Track (Shows 3 cards at once on desktop, pauses on hover) */}
         <div
           className="relative overflow-hidden -mx-3 py-1"
-          onMouseEnter={() => setIsArrivalAutoPlay(false)}
-          onMouseLeave={() => setIsArrivalAutoPlay(true)}
+          onMouseEnter={() => setIsArrivalHovered(true)}
+          onMouseLeave={() => setIsArrivalHovered(false)}
         >
           <div
-            className="flex transition-transform duration-600 ease-out"
+            className="flex transition-transform duration-700 ease-in-out"
             style={{
               transform: `translateX(-${safeArrivalIndex * (100 / visibleCards)}%)`,
             }}
@@ -757,8 +842,14 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
 
           <div className="text-xs text-stone-600 font-normal font-sans flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${isArrivalAutoPlay ? 'bg-emerald-700 animate-pulse' : 'bg-stone-500'}`} />
-            <span>{isArrivalAutoPlay ? 'Auto-advancing • Hover to pause' : 'Slideshow paused'}</span>
+            <span className={`w-2 h-2 rounded-full ${isArrivalAutoPlay ? (isArrivalHovered ? 'bg-amber-600' : 'bg-emerald-700 animate-pulse') : 'bg-stone-500'}`} />
+            <span>
+              {isArrivalAutoPlay
+                ? isArrivalHovered
+                  ? 'Paused on hover'
+                  : 'Auto-advancing (4.5s) • Restarts at end'
+                : 'Slideshow paused'}
+            </span>
           </div>
         </div>
       </section>
@@ -769,15 +860,15 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left Content */}
             <div className="lg:col-span-7 space-y-4">
-              <div className="text-xs uppercase tracking-[0.25em] text-[#7E6348] font-semibold font-sans">
+              <div className="text-xs uppercase tracking-[0.25em] text-amber-800 font-semibold font-sans">
                 FOR HOMES, BUILDERS & BUSINESSES
               </div>
 
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-stone-900 font-normal tracking-tight">
+              <h2 className="font-serif text-2xl lg:text-4xl text-zinc-900 font-normal tracking-tight">
                 Let's Build Something Exceptional
               </h2>
 
-              <p className="text-stone-700 text-sm sm:text-base font-normal max-w-xl leading-relaxed">
+              <p className="text-zinc-600 text-sm lg:text-base font-normal max-w-xl leading-relaxed">
                 Get a customized quotation for your residential or commercial project with expert recommendations and special pricing.
               </p>
 
@@ -841,10 +932,10 @@ export const HomePage: React.FC<HomePageProps> = ({
       {/* 6. SIMPLE & CONVENIENT / How It Works */}
       <section className="py-14 sm:py-18 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-xl mx-auto mb-10">
-          <div className="text-xs uppercase tracking-[0.25em] text-[#7E6348] font-semibold font-sans mb-1">
+          <div className="text-xs uppercase tracking-[0.25em] text-amber-800 font-semibold font-sans mb-1">
             SIMPLE & CONVENIENT
           </div>
-          <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-stone-900 font-normal tracking-tight">
+          <h2 className="font-serif text-2xl lg:text-4xl text-zinc-900 font-normal tracking-tight">
             How It Works
           </h2>
         </div>
@@ -920,10 +1011,10 @@ export const HomePage: React.FC<HomePageProps> = ({
       </section>
 
       {/* 8. OUR TRUSTED BRANDS */}
-      <section className="py-12 bg-white border-b border-stone-200">
+      <section id="brands" className="py-12 bg-white border-b border-zinc-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8 pb-3 border-b border-stone-100">
-            <h3 className="text-xs font-semibold uppercase tracking-[0.25em] text-[#7E6348] font-sans">
+          <div className="flex items-center justify-between mb-8 pb-3 border-b border-zinc-100">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.25em] text-amber-800 font-sans">
               OUR TRUSTED BRANDS
             </h3>
             <button

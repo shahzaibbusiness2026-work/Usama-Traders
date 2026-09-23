@@ -140,25 +140,25 @@ export const ArchitecturalProductCard: React.FC<ArchitecturalProductCardProps> =
       <div className="p-4 sm:p-5 flex flex-col flex-1 justify-between">
         <div>
           {/* Brand/Category Tag with standardized tracking */}
-          <div className="tracking-[0.25em] text-xs font-semibold text-[#7E6348] uppercase font-sans mb-1.5">
+          <div className="tracking-[0.25em] text-xs font-semibold text-amber-800 uppercase font-sans mb-1.5">
             {product.category || 'PORCELAIN & TILES'}
           </div>
 
-          {/* Product Title in refined Cormorant/Playfair serif */}
+          {/* Product Title in refined Cormorant serif */}
           <h3
             onClick={() => onSelectProduct(product)}
-            className="font-serif text-lg font-medium text-stone-900 group-hover:text-[#7E6348] cursor-pointer transition-colors leading-snug line-clamp-1"
+            className="font-serif text-lg font-normal text-zinc-900 group-hover:text-amber-800 cursor-pointer transition-colors leading-snug line-clamp-1"
             title={product.name}
           >
             {product.name}
           </h3>
 
-          {/* Technical Specs & Subtext with WCAG AA compliant text-stone-600 contrast */}
-          <p className="text-[13px] text-stone-600 font-normal mt-1 line-clamp-1">
+          {/* Technical Specs & Subtext */}
+          <p className="text-xs text-zinc-500 font-normal mt-1 line-clamp-1">
             {product.subtitle || product.material || product.type}
           </p>
 
-          <p className="text-[13px] text-stone-600 font-normal mt-0.5 line-clamp-1">
+          <p className="text-xs text-zinc-500 font-normal mt-0.5 line-clamp-1">
             {product.dimensions}
             {product.finish && !product.dimensions?.includes(product.finish)
               ? ` • ${product.finish}`

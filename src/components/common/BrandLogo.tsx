@@ -14,8 +14,8 @@ interface BrandLogoProps {
 export const BrandLogo: React.FC<BrandLogoProps> = ({
   variant = 'dark',
   size = 'md',
-  showTagline = true,
-  tagline = 'SPACES FOR A BETTER TOMORROW',
+  showTagline = false,
+  tagline = '',
   hideTaglineOnMobile = false,
   className = '',
   isDashboard = false,
@@ -74,10 +74,10 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         </div>
       )}
 
-      {/* Brand Wordmark & Tagline */}
+      {/* Brand Wordmark */}
       <div className="flex flex-col justify-center">
         <span
-          className={`font-editorial ${titleSizes[size]} font-normal leading-tight tracking-tight transition-colors ${
+          className={`font-editorial ${titleSizes[size]} font-normal leading-none tracking-tight transition-colors ${
             isLight
               ? 'text-white group-hover:text-[#d5b282]'
               : 'text-stone-900 group-hover:text-[#886d4b]'
@@ -85,16 +85,6 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         >
           Saleem Traders
         </span>
-
-        {showTagline && (
-          <span
-            className={`${taglineSizes[size]} uppercase font-sans font-medium mt-0.5 transition-colors ${
-              hideTaglineOnMobile ? 'hidden sm:block' : ''
-            } ${isLight ? 'text-stone-400' : 'text-stone-500'}`}
-          >
-            {tagline}
-          </span>
-        )}
       </div>
     </div>
   );

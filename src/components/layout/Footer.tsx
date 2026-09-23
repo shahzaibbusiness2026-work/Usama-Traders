@@ -32,7 +32,6 @@ export const Footer: React.FC<FooterProps> = ({ setActiveView, onOpenQuote }) =>
             <BrandLogo
               variant="light"
               size="md"
-              tagline="SPACES FOR A BETTER TOMORROW"
               onClick={() => {
                 setActiveView('home');
                 window.scrollTo({ top: 0, behavior: 'smooth' });

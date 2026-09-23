@@ -7,13 +7,8 @@ import {
   Menu,
   X,
   ArrowRight,
-  Home,
-  Grid,
-  Sparkles,
-  Building2,
+  ChevronDown,
   Phone,
-  ChevronRight,
-  Scale,
 } from 'lucide-react';
 import { ActiveView } from '../../types';
 import { BrandLogo } from '../common/BrandLogo';
@@ -38,8 +33,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveView,
   cartCount,
   wishlistCount,
-  comparisonCount = 0,
-  onOpenComparisonModal,
   onOpenQuoteModal,
   onOpenCartDrawer,
   onOpenCart,
@@ -48,6 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   setSearchQuery,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [collectionsExpanded, setCollectionsExpanded] = useState(false);
   const [desktopSearchOpen, setDesktopSearchOpen] = useState(false);
   const desktopSearchRef = useRef<HTMLDivElement>(null);
 
@@ -97,486 +91,472 @@ export const Navbar: React.FC<NavbarProps> = ({
     setMobileMenuOpen(false);
   };
 
-  const navLinks = [
-    { label: 'Home', view: 'home' as ActiveView, hash: '' },
-    { label: 'Collection', view: 'catalog' as ActiveView, hash: '' },
-    { label: 'Sanitaryware', view: 'catalog' as ActiveView, hash: '' },
-    { label: 'Brands', view: 'home' as ActiveView, hash: '#brands' },
-    { label: 'Projects', view: 'home' as ActiveView, hash: '#projects' },
+  const collectionSubLinks = [
+    { label: 'Tiles & Slabs', query: 'Tiles' },
+    { label: 'Sanitaryware', query: 'Sanitaryware' },
+    { label: 'Showers & Wellness', query: 'Showers' },
+    { label: 'Sinks & Taps', query: 'Sinks' },
+    { label: 'Vanities', query: 'Vanities' },
+    { label: 'Accessories', query: 'Accessories' },
   ];
-
-  const quickSearchTags = ['Calacotta Gold', 'Matt Porcelain', 'Grohe Fixtures', 'Sanitaryware', '60x120 Slabs'];
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E5DFD5] shadow-2xs transition-all duration-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20 gap-6">
-            {/* BRAND LOGO (Visible across all screen sizes) */}
-            <div id="site-logo" className="shrink-0">
-              <BrandLogo
-                variant="dark"
-                size="md"
-                onClick={() => {
-                  setActiveView('home');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-              />
+      <header className="h-18 lg:h-20 px-6 lg:px-12 bg-white/90 backdrop-blur-md border-b border-zinc-100 sticky top-0 z-40 transition-all">
+        <div className="max-w-7xl mx-auto h-full flex items-center justify-between gap-4 lg:gap-8">
+          {/* Brand Lockup: Clean horizontal pairing of gold ST logo and serif Saleem Traders */}
+          <div id="site-logo" className="shrink-0 flex items-center">
+            <BrandLogo
+              variant="dark"
+              size="md"
+              showTagline={false}
+              onClick={() => {
+                setActiveView('home');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
+          </div>
+
+          {/* Desktop Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-8 text-xs font-medium text-zinc-700">
+            <button
+              onClick={() => {
+                setActiveView('home');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`py-2 uppercase tracking-[0.2em] transition-colors hover:text-amber-800 ${
+                activeView === 'home' ? 'text-amber-800 font-semibold' : 'text-zinc-700'
+              }`}
+            >
+              Home
+            </button>
+
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setActiveView('catalog');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`py-2 uppercase tracking-[0.2em] transition-colors hover:text-amber-800 ${
+                activeView === 'catalog' || activeView === 'product'
+                  ? 'text-amber-800 font-semibold'
+                  : 'text-zinc-700'
+              }`}
+            >
+              Collections
+            </button>
+
+            <button
+              onClick={() => {
+                setSearchQuery('Sanitaryware');
+                setActiveView('catalog');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="py-2 uppercase tracking-[0.2em] transition-colors text-zinc-700 hover:text-amber-800"
+            >
+              Sanitaryware
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveView('home');
+                setTimeout(() => {
+                  document.querySelector('#brands')?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+              }}
+              className="py-2 uppercase tracking-[0.2em] transition-colors text-zinc-700 hover:text-amber-800"
+            >
+              Brands
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveView('home');
+                setTimeout(() => {
+                  document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+              }}
+              className="py-2 uppercase tracking-[0.2em] transition-colors text-zinc-700 hover:text-amber-800"
+            >
+              Projects
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveView('dashboard');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="py-1 px-2.5 rounded-full border border-zinc-200 text-zinc-700 hover:text-amber-800 hover:border-amber-700/50 uppercase tracking-[0.16em] text-[10px] font-semibold transition-colors"
+            >
+              Executive Suite
+            </button>
+          </nav>
+
+          {/* Action Bar (Search, Wishlist, Quote Bag, Request Quote Button) */}
+          <div className="hidden lg:flex items-center gap-3 shrink-0">
+            {/* Search Input Box */}
+            <div ref={desktopSearchRef} className="relative flex items-center">
+              <AnimatePresence mode="wait">
+                {desktopSearchOpen ? (
+                  <motion.div
+                    key="desktop-search-input-wrap"
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: 230, opacity: 1 }}
+                    exit={{ width: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden flex items-center"
+                  >
+                    <div className="relative w-full">
+                      <input
+                        type="text"
+                        autoFocus
+                        placeholder="Search tiles, sanitaryware..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            executeSearch(searchQuery);
+                            setDesktopSearchOpen(false);
+                          } else if (e.key === 'Escape') {
+                            setDesktopSearchOpen(false);
+                          }
+                        }}
+                        className="w-full bg-zinc-50 border border-zinc-200 focus:border-amber-800 rounded-full pl-8 pr-7 py-1.5 text-xs text-zinc-800 placeholder-zinc-400 focus:outline-none transition-all"
+                      />
+                      <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <button
+                        onClick={() => setDesktopSearchOpen(false)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 p-0.5"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <button
+                    onClick={() => setDesktopSearchOpen(true)}
+                    className="p-2 rounded-full hover:bg-zinc-100 text-zinc-600 hover:text-zinc-900 transition-colors"
+                    aria-label="Search"
+                  >
+                    <Search className="w-4.5 h-4.5 stroke-[1.8]" />
+                  </button>
+                )}
+              </AnimatePresence>
             </div>
 
-            {/* DESKTOP NAVIGATION LINKS (Evenly spaced gap-8, luxury optical tracking) */}
-            <nav className="hidden lg:flex items-center gap-8 text-xs font-semibold text-stone-700">
-              {navLinks.map((link) => {
-                const isSelected =
-                  (link.label === 'Home' && activeView === 'home') ||
-                  (link.label === 'Collection' && (activeView === 'catalog' || activeView === 'product'));
-
-                return (
-                  <button
-                    key={link.label}
-                    onClick={() => {
-                      setActiveView(link.view);
-                      if (link.hash) {
-                        const el = document.querySelector(link.hash);
-                        if (el) el.scrollIntoView({ behavior: 'smooth' });
-                      } else {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }
-                    }}
-                    className={`relative py-2 transition-colors font-sans uppercase tracking-[0.25em] text-xs font-semibold hover:text-[#7E6348] ${
-                      isSelected ? 'text-[#7E6348]' : 'text-stone-700'
-                    }`}
-                  >
-                    {link.label}
-                    {isSelected && (
-                      <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-[#7E6348] rounded-full" />
-                    )}
-                  </button>
-                );
-              })}
-            </nav>
-
-            {/* DESKTOP SEARCH, UTILITIES & ARCHITECTURAL THIN-BORDERED CTA */}
-            <div className="hidden lg:flex items-center gap-3 xl:gap-3.5 shrink-0">
-              {/* Desktop Search Icon Only */}
-              <div ref={desktopSearchRef} className="relative flex items-center">
-                <AnimatePresence mode="wait">
-                  {desktopSearchOpen ? (
-                    <motion.div
-                      key="desktop-search-expanded"
-                      initial={{ width: 0, opacity: 0 }}
-                      animate={{ width: 250, opacity: 1 }}
-                      exit={{ width: 0, opacity: 0 }}
-                      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                      className="overflow-hidden flex items-center"
-                    >
-                      <div className="relative w-full">
-                        <input
-                          id="desktop-search-input"
-                          type="text"
-                          autoFocus
-                          placeholder="Search tiles, sanitaryware..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              executeSearch(searchQuery);
-                              setDesktopSearchOpen(false);
-                            } else if (e.key === 'Escape') {
-                              setDesktopSearchOpen(false);
-                            }
-                          }}
-                          className="w-full bg-stone-50 focus:bg-white border border-stone-300 focus:border-[#7E6348] rounded-full pl-8 pr-7 py-1.5 text-xs text-stone-800 placeholder-stone-400 focus:outline-none transition-all shadow-2xs font-sans"
-                        />
-                        <Search className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <button
-                          onClick={() => setDesktopSearchOpen(false)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 p-0.5 rounded-full transition-colors"
-                          title="Close search"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </motion.div>
-                  ) : (
-                    <button
-                      key="desktop-search-icon"
-                      id="desktop-search-btn"
-                      onClick={() => setDesktopSearchOpen(true)}
-                      className="p-2.5 rounded-full hover:bg-[#F5F1EA] text-stone-700 hover:text-stone-950 transition-colors"
-                      title="Search catalog"
-                      aria-label="Search catalog"
-                    >
-                      <Search className="w-5 h-5 stroke-[1.6]" />
-                    </button>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Comparison Tool Button */}
-              {onOpenComparisonModal && (
-                <button
-                  id="desktop-compare-btn"
-                  onClick={onOpenComparisonModal}
-                  className="relative p-2.5 rounded-full hover:bg-[#F5F1EA] text-stone-700 hover:text-stone-950 transition-colors"
-                  title={`Side-by-side comparison (${comparisonCount} items)`}
-                >
-                  <Scale className="w-5 h-5 stroke-[1.6]" />
-                  {comparisonCount > 0 && (
-                    <span className="absolute top-0.5 right-0.5 bg-[#7E6348] text-white text-[10px] min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center font-bold shadow-xs">
-                      {comparisonCount}
-                    </span>
-                  )}
-                </button>
+            {/* Wishlist Button */}
+            <button
+              onClick={() => setActiveView('catalog')}
+              className="relative p-2 rounded-full hover:bg-zinc-100 text-zinc-600 hover:text-zinc-900 transition-colors"
+              aria-label="Wishlist"
+              title={`Wishlist (${wishlistCount})`}
+            >
+              <Heart className="w-4.5 h-4.5 stroke-[1.8]" />
+              {wishlistCount > 0 && (
+                <span className="absolute top-0 right-0 bg-amber-800 text-white text-[10px] min-w-[16px] h-[16px] px-1 rounded-full flex items-center justify-center font-semibold">
+                  {wishlistCount}
+                </span>
               )}
+            </button>
 
-              {/* Wishlist Button */}
-              <button
-                id="desktop-wishlist-btn"
-                onClick={() => {
-                  setActiveView('catalog');
-                }}
-                className="relative p-2.5 rounded-full hover:bg-[#F5F1EA] text-stone-700 hover:text-stone-950 transition-colors"
-                title={`Saved Wishlist (${wishlistCount} items)`}
-              >
-                <Heart className="w-5 h-5 stroke-[1.6]" />
-                {wishlistCount > 0 && (
-                  <span className="absolute top-0.5 right-0.5 bg-[#7E6348] text-white text-[10px] min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center font-bold shadow-xs">
-                    {wishlistCount}
-                  </span>
-                )}
-              </button>
-
-              {/* Cart / Quote Bag Button */}
-              <button
-                id="desktop-cart-btn"
-                onClick={handleCartClick}
-                className="relative p-2.5 rounded-full hover:bg-[#F5F1EA] text-stone-700 hover:text-stone-950 transition-colors"
-                title={`Selected Quote Cart (${cartCount} items)`}
-              >
-                <ShoppingBag className="w-5 h-5 stroke-[1.6]" />
-                <span className="absolute top-0.5 right-0.5 bg-stone-900 text-white text-[10px] min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center font-bold shadow-xs">
+            {/* Quote Bag Button */}
+            <button
+              onClick={handleCartClick}
+              className="relative p-2 rounded-full hover:bg-zinc-100 text-zinc-600 hover:text-zinc-900 transition-colors"
+              aria-label="Quote Bag"
+              title={`Quote Bag (${cartCount})`}
+            >
+              <ShoppingBag className="w-4.5 h-4.5 stroke-[1.8]" />
+              {cartCount > 0 && (
+                <span className="absolute top-0 right-0 bg-zinc-900 text-white text-[10px] min-w-[16px] h-[16px] px-1 rounded-full flex items-center justify-center font-semibold">
                   {cartCount}
                 </span>
-              </button>
+              )}
+            </button>
 
-              {/* Architectural Thin-Bordered CTA Button */}
-              <button
-                id="desktop-request-quote-btn"
-                onClick={handleQuoteClick}
-                className="inline-flex items-center justify-center px-6 py-2.5 border border-[#7E6348] text-[#7E6348] hover:bg-[#7E6348] hover:text-white text-xs font-semibold tracking-[0.2em] uppercase rounded-none transition-all duration-300 shadow-2xs"
-              >
-                Request a Quote
-              </button>
-            </div>
+            {/* Request a Quote CTA */}
+            <button
+              onClick={handleQuoteClick}
+              className="ml-2 px-4 py-2 border border-amber-800 text-amber-800 hover:bg-amber-800 hover:text-white text-xs font-medium tracking-[0.18em] uppercase transition-all duration-200"
+            >
+              Request a Quote
+            </button>
+          </div>
 
-            {/* MOBILE & TABLET VIEW: QUICK ACTIONS & HAMBURGER */}
-            <div className="lg:hidden flex items-center gap-2">
-              <button
-                onClick={handleCartClick}
-                className="relative p-2.5 rounded-lg border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-800 transition-colors"
-                aria-label="View Cart"
-              >
-                <ShoppingBag className="w-5 h-5 stroke-[1.8]" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-stone-900 text-white text-[10px] min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center font-bold shadow-xs">
-                    {cartCount}
-                  </span>
-                )}
-              </button>
+          {/* Mobile Action Bar */}
+          <div className="lg:hidden flex items-center gap-2">
+            <button
+              onClick={handleCartClick}
+              className="relative p-2 rounded-lg border border-zinc-200 text-zinc-700 bg-white"
+              aria-label="Quote Bag"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-zinc-900 text-white text-[10px] min-w-[16px] h-[16px] px-1 rounded-full flex items-center justify-center font-semibold">
+                  {cartCount}
+                </span>
+              )}
+            </button>
 
-              <button
-                id="mobile-menu-toggle"
-                onClick={() => setMobileMenuOpen(true)}
-                className="relative p-2.5 rounded-lg border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-800 hover:text-stone-950 transition-colors focus:outline-none focus:ring-2 focus:ring-[#7E6348]"
-                aria-label="Open Navigation Menu"
-              >
-                <Menu className="w-6 h-6 stroke-[2]" />
-                {(wishlistCount > 0 || comparisonCount > 0) && (
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#7E6348] rounded-full ring-2 ring-white" />
-                )}
-              </button>
-            </div>
+            <button
+              id="mobile-menu-toggle"
+              onClick={() => setMobileMenuOpen(true)}
+              className="p-2 rounded-lg border border-zinc-200 text-zinc-700 bg-white hover:text-zinc-900"
+              aria-label="Open Navigation Menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </header>
 
-      {/* MOBILE & TABLET HAMBURGER SLIDE-OVER DRAWER */}
+      {/* MOBILE HAMBURGER DRAWER */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <div className="fixed inset-0 z-50 lg:hidden">
-            {/* Backdrop Overlay */}
+            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.2 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="absolute inset-0 bg-stone-950/60 backdrop-blur-xs"
+              className="fixed inset-0 bg-zinc-950/50 backdrop-blur-xs"
             />
 
-            {/* Slide-over Drawer Panel */}
+            {/* Slide-over Panel */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-              className="absolute top-0 right-0 bottom-0 w-[90vw] max-w-sm sm:max-w-md bg-white shadow-2xl flex flex-col justify-between overflow-hidden"
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-50 p-6 sm:p-8 flex flex-col justify-between border-l border-zinc-100 overflow-y-auto"
             >
-              {/* Drawer Top Bar */}
-              <div className="p-4 sm:p-5 border-b border-stone-200 flex items-center justify-between bg-[#FAF8F5]">
-                <BrandLogo
-                  variant="dark"
-                  size="sm"
-                  onClick={() => {
-                    setActiveView('home');
-                    setMobileMenuOpen(false);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                />
-                <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 rounded-full text-stone-500 hover:text-stone-900 hover:bg-stone-200/60 transition-colors"
-                  aria-label="Close menu"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Drawer Scrollable Content */}
-              <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-4 space-y-5">
-                {/* 1. Mobile Search Bar */}
-                <div>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search tiles, sanitary, brands..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          executeSearch(searchQuery);
-                        }
-                      }}
-                      className="w-full bg-stone-50 border border-stone-200 rounded-lg pl-9 pr-16 py-2.5 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-[#7E6348] focus:bg-white transition-all font-sans"
-                    />
-                    <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    <button
-                      onClick={() => executeSearch(searchQuery)}
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-[#7E6348] hover:bg-[#A38A6B] text-white text-[11px] font-semibold rounded transition-colors"
-                    >
-                      Search
-                    </button>
-                  </div>
-
-                  {/* Quick Filter Tags */}
-                  <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
-                    <span className="text-[10px] text-stone-400 uppercase font-medium mr-1">Trending:</span>
-                    {quickSearchTags.map((tag) => (
-                      <button
-                        key={tag}
-                        onClick={() => executeSearch(tag)}
-                        className="text-[10px] px-2 py-0.5 rounded-full bg-stone-100 hover:bg-[#F5F1EA] text-stone-700 hover:text-[#7E6348] transition-colors"
-                      >
-                        {tag}
-                      </button>
-                    ))}
-                  </div>
+              {/* Header inside Drawer */}
+              <div>
+                <div className="flex items-center justify-between pb-6 border-b border-zinc-100">
+                  <BrandLogo
+                    variant="dark"
+                    size="sm"
+                    showTagline={false}
+                    onClick={() => {
+                      setActiveView('home');
+                      setMobileMenuOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  />
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-8 h-8 rounded-full border border-zinc-200 text-zinc-500 hover:text-zinc-900 hover:border-zinc-400 flex items-center justify-center transition-colors"
+                    aria-label="Close menu"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
 
-                {/* 2. Quick Action Cards (Quote Bag, Wishlist, Compare) */}
-                <div className="grid grid-cols-3 gap-2">
-                  {/* Cart / Quote Bag Card */}
+                {/* Mobile Search */}
+                <div className="relative mt-6 mb-4">
+                  <input
+                    type="text"
+                    placeholder="Search catalog or brand..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        executeSearch(searchQuery);
+                      }
+                    }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-lg pl-9 pr-4 py-2.5 text-xs text-zinc-800 placeholder-zinc-400 focus:outline-none focus:border-amber-800"
+                  />
+                  <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+
+                {/* Menu Links */}
+                <div className="flex flex-col mt-2">
+                  {/* Home Link */}
+                  <button
+                    onClick={() => {
+                      setActiveView('home');
+                      setMobileMenuOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="text-left text-lg font-light text-zinc-900 py-3 border-b border-zinc-100 hover:text-amber-800 transition-colors"
+                  >
+                    Home
+                  </button>
+
+                  {/* Collections Accordion */}
+                  <div className="border-b border-zinc-100">
+                    <button
+                      type="button"
+                      onClick={() => setCollectionsExpanded((prev) => !prev)}
+                      className="w-full flex items-center justify-between text-left text-lg font-light text-zinc-900 py-3 hover:text-amber-800 transition-colors"
+                    >
+                      <span>Collections</span>
+                      <ChevronDown
+                        className={`w-4 h-4 text-zinc-400 transition-transform duration-200 ${
+                          collectionsExpanded ? 'rotate-180 text-amber-800' : ''
+                        }`}
+                      />
+                    </button>
+
+                    <AnimatePresence initial={false}>
+                      {collectionsExpanded && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden pb-2"
+                        >
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSearchQuery('');
+                              setActiveView('catalog');
+                              setMobileMenuOpen(false);
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className="w-full text-left pl-4 py-2 text-sm text-zinc-700 font-medium hover:text-amber-800 transition-colors"
+                          >
+                            All Collections & Slabs
+                          </button>
+                          {collectionSubLinks.map((item) => (
+                            <button
+                              key={item.label}
+                              type="button"
+                              onClick={() => {
+                                setSearchQuery(item.query);
+                                setActiveView('catalog');
+                                setMobileMenuOpen(false);
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                              }}
+                              className="w-full text-left pl-4 py-2 text-sm text-zinc-600 hover:text-amber-700 transition-colors"
+                            >
+                              {item.label}
+                            </button>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Sanitaryware Direct Link */}
+                  <button
+                    onClick={() => {
+                      setSearchQuery('Sanitaryware');
+                      setActiveView('catalog');
+                      setMobileMenuOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="text-left text-lg font-light text-zinc-900 py-3 border-b border-zinc-100 hover:text-amber-800 transition-colors"
+                  >
+                    Sanitaryware
+                  </button>
+
+                  {/* Partner Brands */}
+                  <button
+                    onClick={() => {
+                      setActiveView('home');
+                      setMobileMenuOpen(false);
+                      setTimeout(() => {
+                        document.querySelector('#brands')?.scrollIntoView({ behavior: 'smooth' });
+                      }, 100);
+                    }}
+                    className="text-left text-lg font-light text-zinc-900 py-3 border-b border-zinc-100 hover:text-amber-800 transition-colors"
+                  >
+                    Partner Brands
+                  </button>
+
+                  {/* Architectural Projects */}
+                  <button
+                    onClick={() => {
+                      setActiveView('home');
+                      setMobileMenuOpen(false);
+                      setTimeout(() => {
+                        document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth' });
+                      }, 100);
+                    }}
+                    className="text-left text-lg font-light text-zinc-900 py-3 border-b border-zinc-100 hover:text-amber-800 transition-colors"
+                  >
+                    Architectural Projects
+                  </button>
+
+                  {/* Executive Dashboard */}
+                  <button
+                    onClick={() => {
+                      setActiveView('dashboard');
+                      setMobileMenuOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="text-left text-lg font-light text-zinc-900 py-3 border-b border-zinc-100 hover:text-amber-800 transition-colors flex items-center justify-between"
+                  >
+                    <span>Executive Dashboard</span>
+                    <span className="text-[10px] tracking-wider uppercase px-2 py-0.5 rounded bg-zinc-100 text-zinc-700 font-semibold font-sans">
+                      BOQ
+                    </span>
+                  </button>
+                </div>
+
+                {/* Bag & Saved Quick Row */}
+                <div className="pt-6 flex items-center justify-between gap-3">
                   <button
                     onClick={() => {
                       setMobileMenuOpen(false);
                       handleCartClick();
                     }}
-                    className="p-2.5 rounded-lg border border-stone-200 bg-stone-50 hover:bg-[#FAF8F5] hover:border-[#7E6348]/50 transition-all text-left flex flex-col justify-between gap-1.5 group"
+                    className="flex-1 flex items-center justify-between p-3 rounded-xl border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 transition-colors text-xs font-medium text-zinc-800"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="w-7 h-7 rounded-full bg-stone-900 text-white flex items-center justify-center group-hover:bg-[#7E6348] transition-colors">
-                        <ShoppingBag className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 bg-stone-200 rounded-full text-stone-800">
-                        {cartCount}
-                      </span>
+                    <div className="flex items-center gap-2">
+                      <ShoppingBag className="w-4 h-4 text-amber-800" />
+                      <span>Quote Bag</span>
                     </div>
-                    <div>
-                      <div className="text-[11px] font-semibold text-stone-900 leading-tight">Quote Bag</div>
-                    </div>
+                    <span className="px-2 py-0.5 rounded-full bg-zinc-900 text-white text-[10px] font-semibold">
+                      {cartCount}
+                    </span>
                   </button>
 
-                  {/* Wishlist Card */}
                   <button
                     onClick={() => {
                       setMobileMenuOpen(false);
                       setActiveView('catalog');
                     }}
-                    className="p-2.5 rounded-lg border border-stone-200 bg-stone-50 hover:bg-[#FAF8F5] hover:border-[#7E6348]/50 transition-all text-left flex flex-col justify-between gap-1.5 group"
+                    className="flex-1 flex items-center justify-between p-3 rounded-xl border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 transition-colors text-xs font-medium text-zinc-800"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="w-7 h-7 rounded-full bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center">
-                        <Heart className="w-3.5 h-3.5 fill-rose-500 text-rose-500" />
-                      </div>
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 bg-stone-200 rounded-full text-stone-800">
-                        {wishlistCount}
-                      </span>
+                    <div className="flex items-center gap-2">
+                      <Heart className="w-4 h-4 text-amber-800" />
+                      <span>Wishlist</span>
                     </div>
-                    <div>
-                      <div className="text-[11px] font-semibold text-stone-900 leading-tight">Wishlist</div>
-                    </div>
-                  </button>
-
-                  {/* Compare Card */}
-                  <button
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      if (onOpenComparisonModal) onOpenComparisonModal();
-                    }}
-                    className="p-2.5 rounded-lg border border-stone-200 bg-stone-50 hover:bg-[#FAF8F5] hover:border-[#7E6348]/50 transition-all text-left flex flex-col justify-between gap-1.5 group"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="w-7 h-7 rounded-full bg-[#F5F1EA] text-[#7E6348] border border-[#7E6348]/30 flex items-center justify-center">
-                        <Scale className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 bg-stone-200 rounded-full text-stone-800">
-                        {comparisonCount}
-                      </span>
-                    </div>
-                    <div>
-                      <div className="text-[11px] font-semibold text-stone-900 leading-tight">Compare</div>
-                    </div>
-                  </button>
-                </div>
-
-                {/* 3. Primary Navigation Menu List */}
-                <div className="space-y-1 pt-1">
-                  <div className="tracking-[0.25em] text-[10px] uppercase font-bold text-stone-400 mb-2 px-1">
-                    Storefront Navigation
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      setActiveView('home');
-                      setMobileMenuOpen(false);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    className={`w-full flex items-center justify-between p-2.5 rounded-lg text-xs font-semibold transition-colors ${
-                      activeView === 'home'
-                        ? 'bg-[#7E6348] text-white'
-                        : 'text-stone-800 hover:bg-stone-100'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Home className="w-4 h-4" />
-                      <span>Home</span>
-                    </div>
-                    <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setActiveView('catalog');
-                      setMobileMenuOpen(false);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    className={`w-full flex items-center justify-between p-2.5 rounded-lg text-xs font-semibold transition-colors ${
-                      activeView === 'catalog' || activeView === 'product'
-                        ? 'bg-[#7E6348] text-white'
-                        : 'text-stone-800 hover:bg-stone-100'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Grid className="w-4 h-4" />
-                      <span>All Products & Catalog</span>
-                    </div>
-                    <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-                  </button>
-
-                  {/* Catalog Categories */}
-                  <div className="pl-9 pr-2 py-1 space-y-1 text-xs text-stone-600">
-                    {[
-                      'Tiles & Porcelain Slabs',
-                      'Sanitaryware & Fixtures',
-                      'Showers & Wellness Systems',
-                      'Sinks & Architectural Taps',
-                      'Vanities & Storage',
-                      'Bathroom Accessories',
-                    ].map((cat) => (
-                      <button
-                        key={cat}
-                        onClick={() => {
-                          setActiveView('catalog');
-                          setMobileMenuOpen(false);
-                        }}
-                        className="w-full text-left py-1 text-xs text-stone-600 hover:text-[#7E6348] transition-colors"
-                      >
-                        • {cat}
-                      </button>
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      setActiveView('home');
-                      setMobileMenuOpen(false);
-                      setTimeout(() => {
-                        const el = document.querySelector('#brands');
-                        if (el) el.scrollIntoView({ behavior: 'smooth' });
-                      }, 100);
-                    }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-lg text-xs font-semibold text-stone-800 hover:bg-stone-100 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Sparkles className="w-4 h-4 text-[#7E6348]" />
-                      <span>Partner Brands</span>
-                    </div>
-                    <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setActiveView('home');
-                      setMobileMenuOpen(false);
-                      setTimeout(() => {
-                        const el = document.querySelector('#projects');
-                        if (el) el.scrollIntoView({ behavior: 'smooth' });
-                      }, 100);
-                    }}
-                    className="w-full flex items-center justify-between p-2.5 rounded-lg text-xs font-semibold text-stone-800 hover:bg-stone-100 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Building2 className="w-4 h-4 text-[#7E6348]" />
-                      <span>Architectural Projects</span>
-                    </div>
-                    <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+                    <span className="px-2 py-0.5 rounded-full bg-zinc-200 text-zinc-800 text-[10px] font-semibold">
+                      {wishlistCount}
+                    </span>
                   </button>
                 </div>
               </div>
 
-              {/* Drawer Footer Actions & Concierge */}
-              <div className="p-4 sm:p-5 border-t border-stone-200 bg-[#FAF8F5] space-y-3">
-                {/* Request a Quote Button */}
+              {/* Drawer Footer Pinned at Bottom */}
+              <div className="pt-6 border-t border-zinc-100 space-y-4">
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
                     handleQuoteClick();
                   }}
-                  className="w-full py-3 border border-[#7E6348] bg-[#7E6348] hover:bg-[#A38A6B] text-white text-xs font-semibold tracking-[0.2em] uppercase rounded-none shadow-sm transition-colors text-center flex items-center justify-center gap-2"
+                  className="w-full py-3.5 bg-amber-800 hover:bg-amber-900 text-white text-xs font-medium tracking-[0.2em] uppercase transition-colors flex items-center justify-center gap-2 shadow-xs"
                 >
                   <span>Request a Project Quote</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
 
-                {/* Showroom Direct Contact */}
-                <div className="pt-2 text-center text-xs text-stone-500">
-                  <div className="flex items-center justify-center gap-1.5 font-medium text-stone-700">
-                    <Phone className="w-3.5 h-3.5 text-[#7E6348]" />
+                <div className="text-center pt-1">
+                  <a
+                    href="tel:+9242111725336"
+                    className="inline-flex items-center justify-center gap-2 text-xs font-medium text-zinc-800 hover:text-amber-800 transition-colors"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-amber-800" />
                     <span>+92 (42) 111-SALEEM (725336)</span>
-                  </div>
-                  <p className="text-[11px] text-stone-500 mt-0.5">
-                    Lahore • Karachi • Islamabad | Mon – Sat: 9am – 8pm
+                  </a>
+                  <p className="text-[11px] text-zinc-400 mt-1 font-light">
+                    Lahore Showroom • Karachi • Islamabad
                   </p>
                 </div>
               </div>
