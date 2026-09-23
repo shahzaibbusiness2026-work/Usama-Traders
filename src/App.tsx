@@ -177,6 +177,7 @@ export default function App() {
             >
               <HomePage
                 setActiveView={setActiveView}
+                setSearchQuery={setSearchQuery}
                 onSelectProduct={(p) => {
                   setSelectedProduct(p);
                   setActiveView('product');

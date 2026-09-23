@@ -21,6 +21,7 @@ import heroLuxuryKitchen from '../../assets/images/hero_luxury_kitchen_179016969
 
 interface HomePageProps {
   setActiveView: (view: ActiveView) => void;
+  setSearchQuery?: (query: string) => void;
   onAddToCart: (product: Product) => void;
   onToggleWishlist: (productId: string) => void;
   wishlistIds: string[];
@@ -34,6 +35,7 @@ interface HomePageProps {
 
 export const HomePage: React.FC<HomePageProps> = ({
   setActiveView,
+  setSearchQuery,
   onAddToCart,
   onToggleWishlist,
   wishlistIds,
@@ -330,152 +332,255 @@ export const HomePage: React.FC<HomePageProps> = ({
     setArrivalSlideIndex((prev) => (prev >= maxArrivalIndex ? 0 : prev + 1));
   };
 
-  const partnerBrands = [
+  const brandSlides = [
     {
-      name: 'Roca',
-      origin: 'Spain',
-      badge: (
-        <span className="font-sans font-black text-2xl tracking-tighter text-stone-900">
-          Roca
-        </span>
-      ),
+      id: 'sanitaryware',
+      tabLabel: 'Sanitaryware & Baths',
+      title: 'World-Renowned Sanitaryware & Bath Fittings',
+      subtitle: 'Engineering excellence, thermostatic mixers and precision vitreous china craft.',
+      brands: [
+        {
+          name: 'Roca',
+          origin: 'Spain',
+          specialty: 'Vitreous China & Basins',
+          badge: (
+            <span className="font-sans font-black text-2xl tracking-tighter text-stone-900">
+              Roca
+            </span>
+          ),
+        },
+        {
+          name: 'GROHE',
+          origin: 'Germany',
+          specialty: 'Thermostatic & SmartControl',
+          badge: (
+            <div className="flex flex-col items-center">
+              <svg className="w-5 h-1.5 text-sky-600 mb-0.5" viewBox="0 0 24 8" fill="currentColor">
+                <path d="M0 4 C 4 1, 8 7, 12 4 C 16 1, 20 7, 24 4 L 24 6 C 20 9, 16 3, 12 6 C 8 9, 4 3, 0 6 Z" />
+              </svg>
+              <span className="font-sans font-black tracking-widest text-lg text-stone-900 leading-none">
+                GROHE
+              </span>
+            </div>
+          ),
+        },
+        {
+          name: 'TOTO',
+          origin: 'Japan',
+          specialty: 'Smart Washlets & Neorest',
+          badge: (
+            <span className="font-sans font-black tracking-[0.22em] text-xl text-stone-900">
+              TOTO
+            </span>
+          ),
+        },
+        {
+          name: 'Hansgrohe',
+          origin: 'Germany',
+          specialty: 'Raindance & PowderRain',
+          badge: (
+            <div className="flex items-center gap-1 font-sans font-bold text-lg text-stone-900 tracking-tight">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0" />
+              <span>hansgrohe</span>
+            </div>
+          ),
+        },
+        {
+          name: 'CERA',
+          origin: 'Italy / India',
+          specialty: 'Contemporary Sanware',
+          badge: (
+            <div className="flex items-center gap-0.5 font-sans font-black text-xl tracking-wider text-stone-900">
+              <span>CERA</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-red-600 inline-block mb-2" />
+            </div>
+          ),
+        },
+        {
+          name: 'Jaquar',
+          origin: 'Global',
+          specialty: 'Architectural Faucets',
+          badge: (
+            <span className="font-serif italic font-bold text-2xl tracking-normal text-stone-900">
+              Jaquar
+            </span>
+          ),
+        },
+      ],
     },
     {
-      name: 'GROHE',
-      origin: 'Germany',
-      badge: (
-        <div className="flex flex-col items-center">
-          <svg className="w-5 h-1.5 text-sky-600 mb-0.5" viewBox="0 0 24 8" fill="currentColor">
-            <path d="M0 4 C 4 1, 8 7, 12 4 C 16 1, 20 7, 24 4 L 24 6 C 20 9, 16 3, 12 6 C 8 9, 4 3, 0 6 Z" />
-          </svg>
-          <span className="font-sans font-black tracking-widest text-lg text-stone-900 leading-none">
-            GROHE
-          </span>
-        </div>
-      ),
+      id: 'surfaces',
+      tabLabel: 'Tiles & Slabs',
+      title: 'Architectural Porcelain, Giant Slabs & Surfaces',
+      subtitle: 'Precision-calibrated porcelain and bookmatched marble finishes from global kilns.',
+      brands: [
+        {
+          name: 'RAK Ceramics',
+          origin: 'UAE',
+          specialty: 'Maximus Giant Slabs',
+          badge: (
+            <div className="flex flex-col items-center">
+              <span className="font-sans font-black text-lg tracking-widest text-stone-900 uppercase">
+                RAK
+              </span>
+              <span className="text-[7.5px] tracking-[0.25em] text-stone-500 uppercase font-semibold">
+                CERAMICS
+              </span>
+            </div>
+          ),
+        },
+        {
+          name: 'Kajaria',
+          origin: 'India',
+          specialty: 'Polished Vitrified',
+          badge: (
+            <span className="font-sans italic font-black text-xl tracking-tight text-stone-900">
+              Kajaria
+            </span>
+          ),
+        },
+        {
+          name: 'Somany',
+          origin: 'Global',
+          specialty: 'Glazed Architectural Tiles',
+          badge: (
+            <span className="font-sans font-bold tracking-[0.16em] text-lg text-stone-900 uppercase">
+              SOMANY
+            </span>
+          ),
+        },
+        {
+          name: 'Atlas Concorde',
+          origin: 'Italy',
+          specialty: 'Bookmatched Porcelain',
+          badge: (
+            <div className="flex flex-col items-center">
+              <span className="font-serif tracking-widest text-sm uppercase text-stone-900 font-bold">
+                atlas concorde
+              </span>
+              <span className="text-[7px] text-stone-500 tracking-[0.2em] uppercase">Ceramiche d'Arte</span>
+            </div>
+          ),
+        },
+        {
+          name: 'Florim',
+          origin: 'Italy',
+          specialty: 'High-Performance Slabs',
+          badge: (
+            <span className="font-sans font-black tracking-[0.2em] text-lg text-stone-900 uppercase">
+              FLORIM
+            </span>
+          ),
+        },
+        {
+          name: 'Caesarstone',
+          origin: 'Global',
+          specialty: 'Engineered Quartz',
+          badge: (
+            <span className="font-sans font-semibold tracking-[0.16em] text-base text-stone-900 uppercase">
+              caesarstone
+            </span>
+          ),
+        },
+      ],
     },
     {
-      name: 'CERA',
-      origin: 'Italy / India',
-      badge: (
-        <div className="flex items-center gap-0.5 font-sans font-black text-xl tracking-wider text-stone-900">
-          <span>CERA</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-red-600 inline-block mb-2" />
-        </div>
-      ),
-    },
-    {
-      name: 'TOTO',
-      origin: 'Japan',
-      badge: (
-        <span className="font-sans font-black tracking-[0.22em] text-xl text-stone-900">
-          TOTO
-        </span>
-      ),
-    },
-    {
-      name: 'Jaquar',
-      origin: 'Global',
-      badge: (
-        <span className="font-serif italic font-bold text-2xl tracking-normal text-stone-900">
-          Jaquar
-        </span>
-      ),
-    },
-    {
-      name: 'hindware',
-      origin: 'Italy Design',
-      badge: (
-        <div className="flex flex-col items-center">
-          <span className="font-sans font-extrabold text-xl tracking-tight text-stone-900 lowercase leading-none">
-            hindware
-          </span>
-          <span className="text-[8px] tracking-[0.2em] uppercase text-stone-500 font-semibold mt-0.5">
-            Italian Collection
-          </span>
-        </div>
-      ),
-    },
-    {
-      name: 'Kajaria',
-      origin: 'India',
-      badge: (
-        <span className="font-sans italic font-black text-xl tracking-tight text-stone-900">
-          Kajaria
-        </span>
-      ),
-    },
-    {
-      name: 'Somany',
-      origin: 'Global',
-      badge: (
-        <span className="font-sans font-bold tracking-[0.16em] text-lg text-stone-900 uppercase">
-          SOMANY
-        </span>
-      ),
-    },
-    {
-      name: 'Kohler',
-      origin: 'USA',
-      badge: (
-        <span className="font-serif font-bold tracking-wider text-xl text-stone-900 uppercase">
-          KOHLER
-        </span>
-      ),
-    },
-    {
-      name: 'RAK Ceramics',
-      origin: 'UAE',
-      badge: (
-        <div className="flex flex-col items-center">
-          <span className="font-sans font-black text-lg tracking-widest text-stone-900 uppercase">
-            RAK
-          </span>
-          <span className="text-[7.5px] tracking-[0.25em] text-stone-500 uppercase font-semibold">
-            CERAMICS
-          </span>
-        </div>
-      ),
-    },
-    {
-      name: 'Duravit',
-      origin: 'Germany',
-      badge: (
-        <span className="font-sans font-bold tracking-[0.18em] text-lg text-stone-900 uppercase">
-          DURAVIT
-        </span>
-      ),
-    },
-    {
-      name: 'Hansgrohe',
-      origin: 'Germany',
-      badge: (
-        <div className="flex items-center gap-1 font-sans font-bold text-lg text-stone-900 tracking-tight">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0" />
-          <span>hansgrohe</span>
-        </div>
-      ),
+      id: 'kitchen-wellness',
+      tabLabel: 'Kitchen & Systems',
+      title: 'Luxury Kitchen Solutions & Engineered Systems',
+      subtitle: 'Granite undermount sinks, concealed cisterns and master bath engineering.',
+      brands: [
+        {
+          name: 'Kohler',
+          origin: 'USA',
+          specialty: 'Master Baths & Cast Iron',
+          badge: (
+            <span className="font-serif font-bold tracking-wider text-xl text-stone-900 uppercase">
+              KOHLER
+            </span>
+          ),
+        },
+        {
+          name: 'Duravit',
+          origin: 'Germany',
+          specialty: 'Designer Ceramic Furniture',
+          badge: (
+            <span className="font-sans font-bold tracking-[0.18em] text-lg text-stone-900 uppercase">
+              DURAVIT
+            </span>
+          ),
+        },
+        {
+          name: 'hindware',
+          origin: 'Italy Design',
+          specialty: 'Italian Collection',
+          badge: (
+            <div className="flex flex-col items-center">
+              <span className="font-sans font-extrabold text-xl tracking-tight text-stone-900 lowercase leading-none">
+                hindware
+              </span>
+              <span className="text-[8px] tracking-[0.2em] uppercase text-stone-500 font-semibold mt-0.5">
+                Italian Collection
+              </span>
+            </div>
+          ),
+        },
+        {
+          name: 'Franke',
+          origin: 'Switzerland',
+          specialty: 'Granite & Steel Kitchen Sinks',
+          badge: (
+            <span className="font-sans font-black tracking-[0.18em] text-xl text-stone-900 uppercase">
+              FRANKE
+            </span>
+          ),
+        },
+        {
+          name: 'Geberit',
+          origin: 'Switzerland',
+          specialty: 'Concealed Cistern Systems',
+          badge: (
+            <div className="flex items-center gap-1 font-sans font-bold text-lg text-stone-900 tracking-wider uppercase">
+              <span className="w-2.5 h-2.5 bg-blue-600 inline-block" />
+              <span>GEBERIT</span>
+            </div>
+          ),
+        },
+        {
+          name: 'Villeroy & Boch',
+          origin: 'Germany',
+          specialty: 'Heritage European Ceramics',
+          badge: (
+            <div className="flex flex-col items-center">
+              <span className="font-serif font-bold text-sm tracking-wide text-stone-900">
+                Villeroy & Boch
+              </span>
+              <span className="text-[7.5px] tracking-[0.2em] text-stone-500 uppercase">1748</span>
+            </div>
+          ),
+        },
+      ],
     },
   ];
 
-  const [brandIndex, setBrandIndex] = useState(0);
+  const [brandSlide, setBrandSlide] = useState(0);
+  const [isBrandAutoPlay, setIsBrandAutoPlay] = useState(true);
   const [isBrandHovered, setIsBrandHovered] = useState(false);
-  const maxBrandIndex = Math.max(0, partnerBrands.length - 4);
 
   useEffect(() => {
-    if (isBrandHovered) return;
+    if (!isBrandAutoPlay || isBrandHovered) return;
     const timer = setInterval(() => {
-      setBrandIndex((prev) => (prev >= maxBrandIndex ? 0 : prev + 1));
-    }, 3200);
+      setBrandSlide((prev) => (prev >= brandSlides.length - 1 ? 0 : prev + 1));
+    }, 4500);
     return () => clearInterval(timer);
-  }, [isBrandHovered, maxBrandIndex]);
+  }, [isBrandAutoPlay, isBrandHovered, brandSlides.length]);
 
-  const handlePrevBrand = () => {
-    setBrandIndex((prev) => (prev <= 0 ? maxBrandIndex : prev - 1));
+  const handlePrevBrandSlide = () => {
+    setBrandSlide((prev) => (prev <= 0 ? brandSlides.length - 1 : prev - 1));
   };
 
-  const handleNextBrand = () => {
-    setBrandIndex((prev) => (prev >= maxBrandIndex ? 0 : prev + 1));
+  const handleNextBrandSlide = () => {
+    setBrandSlide((prev) => (prev >= brandSlides.length - 1 ? 0 : prev + 1));
   };
 
   return (
@@ -606,7 +711,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       </section>
 
       {/* 2. VALUE PROPOSITIONS BAR: 4 Columns Directly Below Hero Matching Reference */}
-      <section className="w-full bg-white border-b border-stone-200 py-6 sm:py-7">
+      <section className="w-full bg-white border-b border-stone-200 py-4 sm:py-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-stone-200">
             {/* 1. Premium Quality */}
@@ -735,9 +840,9 @@ export const HomePage: React.FC<HomePageProps> = ({
       </AnimatePresence>
 
       {/* 2. SHOP BY CATEGORY (3 Cards Shown First + Slideshow of All Collections) */}
-      <section className="py-14 sm:py-18 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-8 sm:py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header with Title and Slideshow Controls */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 border-b border-zinc-200/80 pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-5 gap-3 border-b border-zinc-200/80 pb-3.5">
           <div>
             <div className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-800 font-sans mb-1">
               SHOP BY CATEGORY
@@ -745,13 +850,13 @@ export const HomePage: React.FC<HomePageProps> = ({
             <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-medium text-zinc-900 tracking-tight">
               Everything for Beautiful Spaces
             </h2>
-            <p className="text-sm lg:text-base text-zinc-600 leading-relaxed font-normal mt-2 max-w-2xl">
+            <p className="text-sm lg:text-base text-zinc-600 leading-relaxed font-normal mt-1 max-w-2xl">
               Premium tiles, sanitaryware, kitchen solutions and accessories from the world's leading architectural brands.
             </p>
           </div>
 
           {/* Slideshow Controls & View All Link */}
-          <div className="flex flex-wrap items-center gap-3 self-start sm:self-end">
+          <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-end">
             {/* Category Counter Indicator */}
             <span className="text-xs font-medium text-stone-500 font-sans hidden md:inline-block mr-1">
               {safeCatIndex + 1}–{Math.min(safeCatIndex + visibleCards, categories.length)} of {categories.length}
@@ -876,7 +981,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
 
         {/* Bottom Pagination Dots & Auto-play Status Hint */}
-        <div className="mt-7 flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+        <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
           {/* Dot Indicators for Direct Slide Access */}
           <div className="flex items-center gap-2">
             {Array.from({ length: maxCatIndex + 1 }).map((_, idx) => (
@@ -908,8 +1013,8 @@ export const HomePage: React.FC<HomePageProps> = ({
       </section>
 
       {/* 3. NEW ARRIVALS (3 Products Shown First + Architectural Slideshow) */}
-      <section className="py-14 sm:py-18 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 border-b border-zinc-200/80 pb-5">
+      <section className="py-8 sm:py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-5 gap-3 border-b border-zinc-200/80 pb-3.5">
           <div>
             <div className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-800 font-sans mb-1">
               NEW ARRIVALS
@@ -917,13 +1022,13 @@ export const HomePage: React.FC<HomePageProps> = ({
             <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-medium text-zinc-900 tracking-tight">
               Fresh Choices for Modern Spaces
             </h2>
-            <p className="text-sm lg:text-base text-zinc-600 leading-relaxed font-normal mt-2 max-w-2xl">
+            <p className="text-sm lg:text-base text-zinc-600 leading-relaxed font-normal mt-1 max-w-2xl">
               Recently specified stone slabs, luxury sanitary fixtures, and thermostatic brassware ready for immediate project delivery.
             </p>
           </div>
 
           {/* Slideshow Controls & View All Products */}
-          <div className="flex flex-wrap items-center gap-3 self-start sm:self-end">
+          <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-end">
             {/* Counter */}
             <span className="text-xs font-medium text-stone-500 font-sans hidden md:inline-block mr-1">
               {safeArrivalIndex + 1}–{Math.min(safeArrivalIndex + visibleCards, newArrivals.length)} of {newArrivals.length}
@@ -1025,7 +1130,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
 
         {/* Bottom Pagination Dots & Auto-play Status Hint */}
-        <div className="mt-7 flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+        <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
           {/* Dot Indicators */}
           <div className="flex items-center gap-2">
             {Array.from({ length: maxArrivalIndex + 1 }).map((_, idx) => (
@@ -1057,11 +1162,11 @@ export const HomePage: React.FC<HomePageProps> = ({
       </section>
 
       {/* 5. PROJECT QUOTATION BANNER (Refined Bronze Palette) */}
-      <section className="bg-[#F5F1EA] border-y border-[#E5DFD5] py-12 lg:py-16">
+      <section className="bg-[#F5F1EA] border-y border-[#E5DFD5] py-8 sm:py-10 lg:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             {/* Left Content */}
-            <div className="lg:col-span-7 space-y-4">
+            <div className="lg:col-span-7 space-y-3">
               <div className="text-xs uppercase tracking-[0.25em] text-amber-800 font-semibold font-sans">
                 FOR HOMES, BUILDERS & BUSINESSES
               </div>
@@ -1094,7 +1199,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
 
               {/* 4 Checkbox items */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-4 text-xs text-stone-800">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3 text-xs text-stone-800">
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-emerald-700 stroke-[2.5]" />
                   <span>Competitive Project Pricing</span>
@@ -1120,7 +1225,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <img
                   src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=700&q=80"
                   alt="Spaces People Love"
-                  className="w-full h-64 sm:h-72 object-cover"
+                  className="w-full h-60 sm:h-64 object-cover"
                 />
                 <div className="absolute bottom-4 right-4 text-white font-serif italic text-lg drop-shadow-md">
                   Spaces People Love—
@@ -1131,97 +1236,191 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
-      {/* OUR PARTNER BRANDS (Interactive Carousel matching user reference image) */}
-      <section id="partner-brands" className="py-14 sm:py-18 bg-[#fbf9f5] border-b border-stone-200">
+      {/* OUR PARTNER BRANDS (Interactive Architectural Slideshow) */}
+      <section id="partner-brands" className="py-8 sm:py-10 bg-[#fbf9f5] border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-3 border-b border-stone-200/80 gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-5 pb-3 border-b border-stone-200/80 gap-4">
             <div>
               <div className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-800 font-sans mb-1">
-                TRUSTED BY THE BEST
+                TRUSTED BY THE BEST • SLIDESHOW
               </div>
-              <h2 className="font-serif text-3xl sm:text-4xl text-stone-900 font-medium tracking-tight">
+              <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl text-stone-900 font-medium tracking-tight">
                 Our Partner Brands
               </h2>
-              <p className="text-sm text-stone-600 font-normal mt-1.5 max-w-xl">
-                We work with leading global brands to bring you quality, style and reliability.
+              <p className="text-sm text-stone-600 font-normal mt-1 max-w-xl">
+                <span className="font-semibold text-stone-900">{brandSlides[brandSlide].title}</span> — {brandSlides[brandSlide].subtitle}
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                setActiveView('catalog');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className="group inline-flex items-center gap-1.5 text-xs font-semibold text-stone-900 hover:text-[#7E6348] uppercase tracking-[0.16em] transition-colors self-start sm:self-end"
-            >
-              <span>View All Brands</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-            </button>
+            {/* Slideshow Category Tabs & Controls */}
+            <div className="flex flex-wrap items-center gap-2.5 self-start lg:self-end">
+              {/* Slide Tabs */}
+              <div className="flex items-center bg-stone-200/70 p-1 rounded-lg gap-1">
+                {brandSlides.map((slide, idx) => (
+                  <button
+                    key={slide.id}
+                    onClick={() => setBrandSlide(idx)}
+                    className={`px-3 py-1.5 text-xs font-semibold tracking-wide rounded-md transition-all ${
+                      brandSlide === idx
+                        ? 'bg-white text-[#7E6348] shadow-xs'
+                        : 'text-stone-600 hover:text-stone-900 hover:bg-white/50'
+                    }`}
+                  >
+                    <span className="hidden sm:inline">0{idx + 1}. </span>
+                    {slide.tabLabel}
+                  </button>
+                ))}
+              </div>
+
+              {/* Progress Countdown Bar */}
+              <div className="hidden md:flex items-center gap-1.5" title="Auto-advance countdown">
+                <div className="w-12 h-1 bg-stone-200/90 rounded-full overflow-hidden">
+                  <motion.div
+                    key={`brand-progress-${brandSlide}-${isBrandAutoPlay}-${isBrandHovered}`}
+                    initial={{ width: '0%' }}
+                    animate={{ width: isBrandAutoPlay && !isBrandHovered ? '100%' : '0%' }}
+                    transition={{ duration: 4.5, ease: 'linear' }}
+                    className="h-full bg-[#7E6348] rounded-full"
+                  />
+                </div>
+              </div>
+
+              {/* Play / Pause Toggle */}
+              <button
+                onClick={() => setIsBrandAutoPlay(!isBrandAutoPlay)}
+                className="w-8 h-8 rounded-full border border-stone-300 hover:border-[#7E6348] flex items-center justify-center text-stone-600 hover:text-[#7E6348] transition-colors"
+                title={isBrandAutoPlay ? 'Pause automatic slideshow' : 'Play automatic slideshow'}
+                aria-label={isBrandAutoPlay ? 'Pause slideshow' : 'Play slideshow'}
+              >
+                {isBrandAutoPlay ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
+              </button>
+
+              {/* Prev / Next Slide Chevrons */}
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={handlePrevBrandSlide}
+                  className="w-8 h-8 rounded-full border border-stone-300 hover:border-stone-900 bg-white hover:bg-stone-50 flex items-center justify-center text-stone-700 hover:text-stone-950 transition-all shadow-2xs"
+                  aria-label="Previous brand slide"
+                  title="Previous slide"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={handleNextBrandSlide}
+                  className="w-8 h-8 rounded-full border border-stone-300 hover:border-stone-900 bg-white hover:bg-stone-50 flex items-center justify-center text-stone-700 hover:text-stone-950 transition-all shadow-2xs"
+                  aria-label="Next brand slide"
+                  title="Next slide"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* View All in Catalog */}
+              <button
+                onClick={() => {
+                  setActiveView('catalog');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="group inline-flex items-center gap-1 text-xs font-semibold text-stone-900 hover:text-[#7E6348] uppercase tracking-[0.14em] transition-colors ml-1"
+              >
+                <span>All Brands</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
           </div>
 
-          {/* Carousel Viewport with Arrows */}
+          {/* Slideshow Display Container with Smooth Slide Transitions */}
           <div
-            className="relative flex items-center gap-3 sm:gap-4"
+            className="relative py-2"
             onMouseEnter={() => setIsBrandHovered(true)}
             onMouseLeave={() => setIsBrandHovered(false)}
           >
-            {/* Left Chevron Button */}
-            <button
-              onClick={handlePrevBrand}
-              className="w-10 h-10 rounded-full border border-stone-300 hover:border-stone-900 bg-white hover:bg-stone-50 flex items-center justify-center text-stone-700 hover:text-stone-950 transition-all shadow-xs shrink-0 cursor-pointer"
-              aria-label="Previous partner brands"
-              title="Previous brands"
-            >
-              <ChevronLeft className="w-4.5 h-4.5" />
-            </button>
-
-            {/* Overflow Hidden Track */}
-            <div className="overflow-hidden flex-1 py-2">
-              <div
-                className="flex transition-transform duration-600 ease-in-out gap-4"
-                style={{
-                  transform: `translateX(-${brandIndex * 20}%)`,
-                }}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={brandSlide}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.35, ease: 'easeInOut' }}
+                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4"
               >
-                {partnerBrands.map((brand, idx) => (
+                {brandSlides[brandSlide].brands.map((brand, bIdx) => (
                   <div
-                    key={idx}
+                    key={bIdx}
                     onClick={() => {
+                      if (setSearchQuery) {
+                        setSearchQuery(brand.name);
+                      }
                       setActiveView('catalog');
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
-                    className="shrink-0 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-1/6"
+                    className="bg-white border border-stone-200/90 hover:border-[#7E6348] hover:shadow-md rounded-xl p-4 sm:p-5 h-28 flex flex-col items-center justify-between text-center transition-all duration-300 cursor-pointer group hover:-translate-y-0.5"
+                    title={`Browse ${brand.name} in Catalog`}
                   >
-                    <div className="bg-white border border-stone-200/90 hover:border-[#7E6348] hover:shadow-md rounded-xl p-5 h-24 flex flex-col items-center justify-center text-center transition-all duration-300 cursor-pointer group">
-                      <div className="group-hover:scale-105 transition-transform duration-200">
-                        {brand.badge}
-                      </div>
-                      <span className="text-[10px] text-stone-400 uppercase tracking-widest font-sans mt-1.5 group-hover:text-[#7E6348] transition-colors">
+                    <div className="w-full flex justify-between items-center text-[10px] text-stone-400 font-medium">
+                      <span className="bg-stone-100 px-1.5 py-0.5 rounded text-stone-600 font-mono text-[9px] uppercase tracking-wider">
                         {brand.origin}
                       </span>
+                      <span className="opacity-0 group-hover:opacity-100 text-[#7E6348] transition-opacity font-semibold">
+                        View →
+                      </span>
                     </div>
+
+                    <div className="group-hover:scale-105 transition-transform duration-200 my-auto">
+                      {brand.badge}
+                    </div>
+
+                    <span className="text-[10px] text-stone-500 font-sans tracking-tight truncate max-w-full group-hover:text-[#7E6348] transition-colors">
+                      {brand.specialty}
+                    </span>
                   </div>
                 ))}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Bottom Status & Slide Indicator */}
+            <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+              {/* Direct Slide Dots */}
+              <div className="flex items-center gap-2">
+                {brandSlides.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setBrandSlide(idx)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      brandSlide === idx
+                        ? 'w-8 bg-[#7E6348]'
+                        : 'w-2 bg-stone-300 hover:bg-stone-400'
+                    }`}
+                    aria-label={`Jump to brand slide ${idx + 1}`}
+                    title={`Brand slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+
+              {/* Status Message */}
+              <div className="text-xs text-stone-600 font-normal font-sans flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full ${isBrandAutoPlay ? (isBrandHovered ? 'bg-amber-600' : 'bg-emerald-700 animate-pulse') : 'bg-stone-500'}`} />
+                <span>
+                  {isBrandAutoPlay
+                    ? isBrandHovered
+                      ? 'Slideshow paused on hover'
+                      : `Slide ${brandSlide + 1} of ${brandSlides.length} • Auto-advancing (4.5s)`
+                    : 'Slideshow paused'}
+                </span>
+                <span className="text-stone-300 hidden sm:inline">•</span>
+                <span className="text-stone-500 text-[11px] hidden sm:inline">
+                  Click any brand to explore verified collections
+                </span>
               </div>
             </div>
-
-            {/* Right Chevron Button */}
-            <button
-              onClick={handleNextBrand}
-              className="w-10 h-10 rounded-full border border-stone-300 hover:border-stone-900 bg-white hover:bg-stone-50 flex items-center justify-center text-stone-700 hover:text-stone-950 transition-all shadow-xs shrink-0 cursor-pointer"
-              aria-label="Next partner brands"
-              title="Next brands"
-            >
-              <ChevronRight className="w-4.5 h-4.5" />
-            </button>
           </div>
         </div>
       </section>
 
       {/* 6. SIMPLE & CONVENIENT / How It Works */}
-      <section className="py-14 sm:py-18 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-xl mx-auto mb-10">
+      <section className="py-8 sm:py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-xl mx-auto mb-6">
           <div className="text-xs uppercase tracking-[0.25em] text-amber-800 font-semibold font-sans mb-1">
             SIMPLE & CONVENIENT
           </div>
@@ -1230,7 +1429,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {[
             {
               step: '01',
@@ -1255,12 +1454,12 @@ export const HomePage: React.FC<HomePageProps> = ({
           ].map((s) => (
             <div
               key={s.step}
-              className="bg-white p-6 rounded border border-stone-200/90 text-center relative flex flex-col items-center justify-between hover:border-[#7E6348]/40 hover:shadow-md transition-all"
+              className="bg-white p-5 rounded border border-stone-200/90 text-center relative flex flex-col items-center justify-between hover:border-[#7E6348]/40 hover:shadow-md transition-all"
             >
-              <div className="w-10 h-10 rounded-full bg-[#F5F1EA] border border-[#E5DFD5] flex items-center justify-center font-bold text-xs text-[#7E6348] mb-4">
+              <div className="w-10 h-10 rounded-full bg-[#F5F1EA] border border-[#E5DFD5] flex items-center justify-center font-bold text-xs text-[#7E6348] mb-3">
                 {s.step}
               </div>
-              <h3 className="font-serif text-lg font-medium text-stone-900 mb-2">
+              <h3 className="font-serif text-lg font-medium text-stone-900 mb-1.5">
                 {s.title}
               </h3>
               <p className="text-xs sm:text-[13px] text-stone-600 font-normal leading-relaxed">
@@ -1272,10 +1471,10 @@ export const HomePage: React.FC<HomePageProps> = ({
       </section>
 
       {/* 7. TRANSFORM YOUR SPACE TODAY */}
-      <section className="w-full bg-[#fbf9f5] py-8 sm:py-12 lg:py-14 px-4 sm:px-6 lg:px-8">
+      <section className="w-full bg-[#fbf9f5] py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div
-            className="py-14 sm:py-18 px-6 sm:px-12 text-white text-center relative overflow-hidden rounded-2xl sm:rounded-3xl border border-stone-800 shadow-xl"
+            className="py-10 sm:py-12 px-6 sm:px-10 text-white text-center relative overflow-hidden rounded-2xl sm:rounded-3xl border border-stone-800 shadow-xl"
             style={{
               backgroundImage:
                 'linear-gradient(rgba(18, 20, 24, 0.90), rgba(18, 20, 24, 0.94)), url("https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80")',
@@ -1283,7 +1482,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               backgroundPosition: 'center',
             }}
           >
-            <div className="max-w-2xl mx-auto space-y-4">
+            <div className="max-w-2xl mx-auto space-y-3 sm:space-y-4">
               <span className="text-xs uppercase tracking-[0.25em] font-semibold text-amber-500 font-sans">
                 TIMELESS ARCHITECTURAL SPACES
               </span>
